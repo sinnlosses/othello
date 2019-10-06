@@ -1,12 +1,12 @@
 package othello;
 
 /**
- * コマの色を保持する.
+ * コマの表示に使用する文字の列挙.
  */
 public enum PieceType {
     WHITE("○"),
     BLACK("●"),
-    EMPTY("・");
+    EMPTY("#");
 
     /**
      * コマの表示に使用する文字.
@@ -36,7 +36,7 @@ public enum PieceType {
     }
 
     /**
-     * コマの表示に使用する文字を取得する
+     * コマの表示に使用する文字を取得する.
      *
      * @return コマを表す文字
      */

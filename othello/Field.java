@@ -3,27 +3,61 @@ package othello;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * オセロのフィールドを構築するクラス.
+ *
+ */
 public class Field {
-
     /**
-     * フィールドの行数
+     * フィールドの行を表す全アルファベット.
+     */
+    private static final String ROW_ALPHABETS = "ABCDEFGH";
+    /**
+     * フィールドの列を表す全番号.
+     */
+    private static final String COL_NUMBERS = "12345678";
+    /**
+     * アルファベットを対応する行番号に変換する.
+     *
+     * <pre>a -> 0, b -> 1 ... h -> 7</pre>
+     *
+     * @param alRow 変換するアルファベット
+     * @return 対応する行番号
+     */
+    public static int toRowNumber(final String alRow) {
+        if (alRow.trim().length() != 1) {
+            return -1;
+        }
+        return ROW_ALPHABETS.indexOf(alRow.trim().toUpperCase());
+    }
+    /**
+     * 番号を対応する列番号に変換する.
+     *
+     * <pre> 1 -> 0, 2 -> 1, ..., 8 -> 7</pre>
+     *
+     * @param col 変換対象の番号
+     * @return 対応する列番号
+     */
+    public static int toColNumber(final String col) {
+        if (col.trim().length() != 1) {
+            return -1;
+        }
+        return COL_NUMBERS.indexOf((col.trim()));
+    }
+    /**
+     * フィールドの行数.
      */
     private final int ROW = 8;
     /**
-     * フィールドの列数
+     * フィールドの列数.
      */
     private final int COL = 8;
     /**
-     * フィールドの行を表すアルファベット
-     */
-    private static final String ROW_ALPHABETS = "ABCDEFGH";
-    private static final String COL_NUMBERS = "12345678";
-    /**
-     * フィールド本体
+     * フィールド本体.
      */
     private Piece[][] field;
     /**
-     * 現在の手番
+     * 現在の手番.
      */
     private PieceType currentTurn;
 
@@ -49,36 +83,6 @@ public class Field {
         this.field[4][4].setState(PieceType.BLACK);
 
         currentTurn = PieceType.WHITE;
-    }
-
-    /**
-     * アルファベットを対応する行番号に変換する.
-     *
-     * <pre>a -> 0, b -> 1 ... h -> 7</pre>
-     *
-     * @param alRow 変換するアルファベット
-     * @return 対応する行番号
-     */
-    public static int toRowNumber(final String alRow) {
-        if (alRow.trim().length() > 1) {
-            return -1;
-        }
-        return ROW_ALPHABETS.indexOf(alRow.trim().toUpperCase());
-    }
-
-    /**
-     * 番号を対応する列番号に変換する.
-     *
-     * <pre> 1 -> 0, 2 -> 1, ..., 8 -> 7</pre>
-     *
-     * @param col 変換対象の番号
-     * @return 対応する列番号
-     */
-    public static int toColNumber(final String col) {
-        if (col.trim().length() > 1) {
-            return -1;
-        }
-        return COL_NUMBERS.indexOf((col.trim()));
     }
 
     /**
@@ -121,29 +125,7 @@ public class Field {
     }
 
     /**
-     * 白、黒、空きの数を返す.
-     *
-     * @return
-     */
-    private Map<PieceType, Integer> getEachPiecesCnt() {
-        Map<PieceType, Integer> PiecesCnt = new HashMap<>();
-        PiecesCnt.put(PieceType.BLACK, 0);
-        PiecesCnt.put(PieceType.WHITE, 0);
-        PiecesCnt.put(PieceType.EMPTY, 0);
-
-        // 各フィールドの数をカウントする
-        for (int r = 0; r < ROW; r++) {
-            for (int c = 0; c < COL; c++) {
-                PieceType key = field[r][c].getState();
-                int cnt = PiecesCnt.get(field[r][c].getState());
-                PiecesCnt.put(key, ++cnt);
-            }
-        }
-        return PiecesCnt;
-    }
-
-    /**
-     * 現在の黒と白の数を出力する
+     * 現在の黒と白の数を出力する.
      */
     public void printCurrentSituation() {
         Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
@@ -169,11 +151,11 @@ public class Field {
 
     /**
      * コマを置くことができるかどうかを判定する.
-     *
+     * <br>
      * 具体的には以下の3つを調べる
-     * 1. フィールドの内部に置かれているかどうか
-     * 2. まだコマが置かれていない場所かどうか
-     * 3. 挟むコマが存在するかどうか
+     * <li>1. フィールドの内部に置かれているかどうか</li>
+     * <li>2. まだコマが置かれていない場所かどうか</li>
+     * <li>3. 挟むコマが存在するかどうか</li>
      *
      * @param inpRow 置くコマの行番号
      * @param inpCol 置くコマの列番号
@@ -222,6 +204,58 @@ public class Field {
     }
 
     /**
+     * 指定した座標にコマを置く.
+     *
+     * @param inpRow 置く行番号
+     * @param inpCol 置く列番号
+     */
+    public void putPiece(int inpRow, int inpCol) {
+        field[inpRow][inpCol].setState(currentTurn);
+    }
+
+    /**
+     * フィールドの描画を行う.
+     */
+    public void printField() {
+        System.out.println(toString());
+    }
+
+    /**
+     * フィールドを文字列化して返す.
+     *
+     * @return フィールド
+     */
+    @Override
+    public String toString() {
+
+        String lineSeparator = System.lineSeparator();
+        String[] alphabets = ROW_ALPHABETS.split("");
+        String colNumbers = "  " + String.join(" ", COL_NUMBERS.split(""));
+        StringBuilder sb = new StringBuilder();
+
+        // 列番号の並び
+        // 先頭の空白は行列の交差する部分を示す
+        sb.append(colNumbers);
+        sb.append(lineSeparator);
+
+        // 行番号と各フィールドの値が1行分の値
+        for (int r = 0; r < ROW; r++) {
+            sb.append(alphabets[r]);
+            sb.append(" ");
+            for (int c = 0; c < COL; c++) {
+                sb.append(field[r][c]).append(" ");
+            }
+            sb.append(alphabets[r]);
+            sb.append(lineSeparator);
+        }
+
+        sb.append(colNumbers);
+        sb.append(lineSeparator);
+
+        return sb.toString();
+    }
+
+    /**
      * コマを置いた場所から見て指定された方向の先に自分のコマがあるか調べる.
      *
      * @param vectorR 調べる行方向
@@ -263,8 +297,30 @@ public class Field {
     }
 
     /**
-     * コマを置いた場所から見て指定された方向に向かって相手のコマをひっくり返していく.
+     * 白、黒、空きの数を返す.
      *
+     * @return 白、黒、空きのコマの数のマップ
+     */
+    private Map<PieceType, Integer> getEachPiecesCnt() {
+        Map<PieceType, Integer> PiecesCnt = new HashMap<>();
+        PiecesCnt.put(PieceType.BLACK, 0);
+        PiecesCnt.put(PieceType.WHITE, 0);
+        PiecesCnt.put(PieceType.EMPTY, 0);
+
+        // 各フィールドの数をカウントする
+        for (int r = 0; r < ROW; r++) {
+            for (int c = 0; c < COL; c++) {
+                PieceType key = field[r][c].getState();
+                int cnt = PiecesCnt.get(field[r][c].getState());
+                PiecesCnt.put(key, ++cnt);
+            }
+        }
+        return PiecesCnt;
+    }
+
+    /**
+     * コマを置いた場所から見て指定された方向に向かって相手のコマをひっくり返していく.
+     * <br>
      * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている
      * そのためフィールドの内部かどうかをわざわざ調べていない
      *
@@ -284,54 +340,6 @@ public class Field {
             movedR += vectorR;
             movedC += vectorC;
         }
-    }
-
-    /**
-     * 指定した座標にコマを置く.
-     *
-     * @param inpRow 置く行番号
-     * @param inpCol 置く列番号
-     */
-    public void putPiece(int inpRow, int inpCol) {
-        field[inpRow][inpCol].setState(currentTurn);
-    }
-
-    /**
-     * フィールドの描画を行う
-     */
-    public void printField() {
-        System.out.println(toString());
-    }
-
-    /**
-     * フィールドを文字列化して返す
-     *
-     * @return フィールド
-     */
-    @Override
-    public String toString() {
-        String[] alphabets = ROW_ALPHABETS.split("");
-        StringBuilder sb = new StringBuilder();
-
-        // 列番号の並び
-        // 先頭の空白は行列の交差する部分を示す
-        sb.append(" " + COL_NUMBERS);
-        sb.append(System.lineSeparator());
-
-        // 行番号と各フィールドの値が1行分の値
-        for (int r = 0; r < ROW; r++) {
-            sb.append(alphabets[r]);
-            for (int c = 0; c < COL; c++) {
-                sb.append(field[r][c]);
-            }
-            sb.append(alphabets[r]);
-            sb.append(System.lineSeparator());
-        }
-
-        sb.append(" " + COL_NUMBERS);
-        sb.append(System.lineSeparator());
-
-        return sb.toString();
     }
 
     /**

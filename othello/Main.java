@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        int inputRow, inputCol;
         Field othello = new Field();
 
         // 初期表示
@@ -19,12 +18,17 @@ public class Main {
 
             System.out.println(othello.getCurrentTurn().toString() + "の手番です");
 
+            // ここから入力処理
+            int inputRow;
+            int inputCol;
             while (true) {
-                System.out.print("行を選択してください--->(a,b,c...,h)");
-                inputRow = Field.toRowNumber(new Scanner(System.in).nextLine());
+                System.out.println("コマを置く座標の行と列を空白区切りで入力してください");
+                System.out.println("行--->(a,b,c...,h), 列--->(1,2...,8)");
+                System.out.println("例: a 1");
 
-                System.out.print("列を選択してください--->(1,2...,8)");
-                inputCol = Field.toColNumber(new Scanner(System.in).nextLine());
+                String[] inputCoordinate = new Scanner(System.in).nextLine().split(" ");
+                inputRow = Field.toRowNumber(inputCoordinate[0]);
+                inputCol = Field.toColNumber(inputCoordinate[1]);
 
                 // 入力が有効なら入力完了としてループを抜ける
                 if (othello.canPutPiece(inputRow, inputCol)) {
@@ -34,14 +38,9 @@ public class Main {
                 System.out.println("有効な入力ではありません. 正しく入力してください");
             }
 
-            // コマを置けるかチェックして置ける場合は挟んだコマをひっくり返す
-            if (othello.canPutPiece(inputRow, inputCol)) {
-                othello.putPiece(inputRow, inputCol);
-                othello.flipPiecesFromPlaced(inputRow, inputCol);
-            } else {
-                System.out.println("正しく入力してください");
-                continue;
-            }
+            // コマを置き、挟んだコマをひっくり返す
+            othello.putPiece(inputRow, inputCol);
+            othello.flipPiecesFromPlaced(inputRow, inputCol);
 
             othello.printField();
             othello.printCurrentSituation();
