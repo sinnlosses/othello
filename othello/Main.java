@@ -12,23 +12,32 @@ public class Main {
 
         while (!othello.isGameOver()) {
             // 手番がコマを置けなければ手番を相手に移す
-            if (othello.canStillPutForCurrentTurn()) {
+            if (!othello.canPutForCurrentTurn()) {
                 othello.nextPlayer();
                 continue;
             }
 
-            System.out.println(othello.getCurrentTurn().getImage() + "の手番です");
+            System.out.println(othello.getCurrentTurn().toString() + "の手番です");
 
-            System.out.print("行を選択してください--->(a,b,c...)");
-            inputRow = Field.alToInt(new Scanner(System.in).nextLine());
+            while (true) {
+                System.out.print("行を選択してください--->(a,b,c...,h)");
+                inputRow = Field.toRowNumber(new Scanner(System.in).nextLine());
 
-            System.out.print("列を選択してください--->(0,1,2...)");
-            inputCol = new Scanner(System.in).nextInt() - 1;
+                System.out.print("列を選択してください--->(1,2...,8)");
+                inputCol = Field.toColNumber(new Scanner(System.in).nextLine());
+
+                // 入力が有効なら入力完了としてループを抜ける
+                if (othello.canPutPiece(inputRow, inputCol)) {
+                    break;
+                }
+
+                System.out.println("有効な入力ではありません. 正しく入力してください");
+            }
 
             // コマを置けるかチェックして置ける場合は挟んだコマをひっくり返す
             if (othello.canPutPiece(inputRow, inputCol)) {
                 othello.putPiece(inputRow, inputCol);
-                othello.flipPiecesFromPlacedPiece(inputRow, inputCol);
+                othello.flipPiecesFromPlaced(inputRow, inputCol);
             } else {
                 System.out.println("正しく入力してください");
                 continue;

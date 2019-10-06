@@ -9,6 +9,7 @@ public class Piece {
 
     /**
      * コンストラクタ.
+     *
      * 初期値は空き状態
      */
     public Piece() {
@@ -45,17 +46,17 @@ public class Piece {
     /**
      * コマの状態を黒なら白に、白なら黒に変換する.
      */
-    public void flipPiece() {
-        state = PieceType.getType(state.getValue() * -1);
+    public void flip() {
+        state = PieceType.getEnemyType(state);
     }
 
     /**
-     * コマの数字の状態に基づいて色を表示する
+     * コマの色(表示文字)を表示する
      *
-     * @return
+     * @return コマの表示文字
      */
     @Override
     public String toString() {
-        return state.getImage();
+        return state.toString();
     }
 }

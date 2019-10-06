@@ -14,6 +14,11 @@ public class Field {
      */
     private final int COL = 8;
     /**
+     * フィールドの行を表すアルファベット
+     */
+    private static final String ROW_ALPHABETS = "ABCDEFGH";
+    private static final String COL_NUMBERS = "12345678";
+    /**
      * フィールド本体
      */
     private Piece[][] field;
@@ -47,15 +52,33 @@ public class Field {
     }
 
     /**
-     * アルファベットを対応するindexの番号に変換する.
+     * アルファベットを対応する行番号に変換する.
      *
      * <pre>a -> 0, b -> 1 ... h -> 7</pre>
      *
-     * @param al 変換するアルファベット
-     * @return 対応するindex番号
+     * @param alRow 変換するアルファベット
+     * @return 対応する行番号
      */
-    public static int alToInt(String al) {
-        return "abcdefgh".indexOf(al.trim().toLowerCase());
+    public static int toRowNumber(final String alRow) {
+        if (alRow.trim().length() > 1) {
+            return -1;
+        }
+        return ROW_ALPHABETS.indexOf(alRow.trim().toUpperCase());
+    }
+
+    /**
+     * 番号を対応する列番号に変換する.
+     *
+     * <pre> 1 -> 0, 2 -> 1, ..., 8 -> 7</pre>
+     *
+     * @param col 変換対象の番号
+     * @return 対応する列番号
+     */
+    public static int toColNumber(final String col) {
+        if (col.trim().length() > 1) {
+            return -1;
+        }
+        return COL_NUMBERS.indexOf((col.trim()));
     }
 
     /**
@@ -71,7 +94,7 @@ public class Field {
      * 手番を次に移す.
      */
     public void nextPlayer() {
-        currentTurn = PieceType.getType(currentTurn.getValue()*-1);
+        currentTurn = PieceType.getEnemyType(currentTurn);
     }
 
     /**
@@ -86,10 +109,10 @@ public class Field {
      * @return ゲームが終わったならtrue, まだであればfalse
      */
     public boolean isGameOver() {
-        Map<PieceType, Integer> WhiteEmptyBlackCnt = getPiecesCnt();
+        Map<PieceType, Integer> PiecesCnt = getEachPiecesCnt();
 
         // White, Empty, Black、どれか1つでも0なら勝負がついたと判定できる
-        for (int cnt : WhiteEmptyBlackCnt.values()) {
+        for (int cnt : PiecesCnt.values()) {
             if (cnt == 0) {
                 return true;
             }
@@ -102,27 +125,30 @@ public class Field {
      *
      * @return
      */
-    private Map<PieceType, Integer> getPiecesCnt() {
-        Map<PieceType, Integer> WhiteEmptyBlackCnt = new HashMap<>();
-        WhiteEmptyBlackCnt.put(PieceType.BLACK, 0);
-        WhiteEmptyBlackCnt.put(PieceType.WHITE, 0);
-        WhiteEmptyBlackCnt.put(PieceType.EMPTY, 0);
+    private Map<PieceType, Integer> getEachPiecesCnt() {
+        Map<PieceType, Integer> PiecesCnt = new HashMap<>();
+        PiecesCnt.put(PieceType.BLACK, 0);
+        PiecesCnt.put(PieceType.WHITE, 0);
+        PiecesCnt.put(PieceType.EMPTY, 0);
 
         // 各フィールドの数をカウントする
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
                 PieceType key = field[r][c].getState();
-                int cnt = WhiteEmptyBlackCnt.get(field[r][c].getState());
-                WhiteEmptyBlackCnt.put(key, ++cnt);
+                int cnt = PiecesCnt.get(field[r][c].getState());
+                PiecesCnt.put(key, ++cnt);
             }
         }
-        return WhiteEmptyBlackCnt;
+        return PiecesCnt;
     }
 
+    /**
+     * 現在の黒と白の数を出力する
+     */
     public void printCurrentSituation() {
-        Map<PieceType, Integer> piecesCnt = getPiecesCnt();
-        System.out.println(PieceType.BLACK.getImage() + " : " + piecesCnt.get(PieceType.BLACK));
-        System.out.println(PieceType.WHITE.getImage() + " : " + piecesCnt.get(PieceType.WHITE));
+        Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
+        System.out.println(PieceType.BLACK.toString() + " : " + piecesCnt.get(PieceType.BLACK));
+        System.out.println(PieceType.WHITE.toString() + " : " + piecesCnt.get(PieceType.WHITE));
     }
 
     /**
@@ -130,24 +156,24 @@ public class Field {
      *
      * @return コマを置くことができればtrue, そうでなければfalse
      */
-    public boolean canStillPutForCurrentTurn() {
+    public boolean canPutForCurrentTurn() {
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
                 if (canPutPiece(r, c)) {
-                    return false;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
     /**
      * コマを置くことができるかどうかを判定する.
      *
      * 具体的には以下の3つを調べる
-     * 1. フィールドの内部に置かれているかどうか(外部ならfalse)
-     * 2. まだコマが置かれていない場所かどうか(すでに置かれていたらfalse)
-     * 3. 挟むコマが存在するかどうか(挟むコマがないならfalse)
+     * 1. フィールドの内部に置かれているかどうか
+     * 2. まだコマが置かれていない場所かどうか
+     * 3. 挟むコマが存在するかどうか
      *
      * @param inpRow 置くコマの行番号
      * @param inpCol 置くコマの列番号
@@ -162,7 +188,6 @@ public class Field {
         if (!field[inpRow][inpCol].isEmpty()) {
             return false;
         }
-
         // 置いたコマから見て周囲8方向に挟むコマがあるかどうかを調べる
         for (int r = inpRow - 1; r <= inpRow + 1; r++) {
             for (int c = inpCol - 1; c <= inpCol + 1; c++) {
@@ -178,12 +203,12 @@ public class Field {
     }
 
     /**
-     * 指定したコマの座標から見て挟んでいる相手のコマをひっくり返す.
+     * 指定したコマの座標から見て周囲8方向に対して自分のコマで挟んでいる相手のコマをひっくり返す.
      *
      * @param inpRow コマの行番号
      * @param inpCol コマの列番号
      */
-    public void flipPiecesFromPlacedPiece(int inpRow, int inpCol) {
+    public void flipPiecesFromPlaced(int inpRow, int inpCol) {
         for (int r = inpRow - 1; r <= inpRow + 1; r++) {
             for (int c = inpCol - 1; c <= inpCol + 1; c++) {
                 // 自分のコマが調べる方向の先にあるか
@@ -215,7 +240,7 @@ public class Field {
             return false;
         }
 
-        PieceType enemy = PieceType.getType(currentTurn.getValue()*-1);
+        PieceType enemy = PieceType.getEnemyType(currentTurn);
         if (field[movedR][movedC].getState() != enemy ) {
             return false;
         }
@@ -243,21 +268,18 @@ public class Field {
      * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている
      * そのためフィールドの内部かどうかをわざわざ調べていない
      *
-     * @param vectorR
-     * @param vectorC
-     * @param inpRow
-     * @param inpCol
+     * @param vectorR ひっくり返していく行方向
+     * @param vectorC ひっくり返してく列方向
+     * @param inpRow 置いた行番号
+     * @param inpCol 置いた列番号
      */
     private void flipBetweenOwnPieces(int vectorR, int vectorC, int inpRow, int inpCol) {
         int movedR = inpRow + vectorR;
         int movedC = inpCol + vectorC;
 
-        while (true) {
-            if (this.field[movedR][movedC].getState() == currentTurn) {
-                break;
-            }
-
-            field[movedR][movedC].flipPiece();
+        // 自分のコマにたどり着くまで相手のコマをひっくり返していく
+        while (field[movedR][movedC].getState() != currentTurn) {
+            field[movedR][movedC].flip();
 
             movedR += vectorR;
             movedC += vectorC;
@@ -288,11 +310,12 @@ public class Field {
      */
     @Override
     public String toString() {
-        String[] alphabets = {"A", "B", "C", "D", "E", "F", "G", "H"};
+        String[] alphabets = ROW_ALPHABETS.split("");
         StringBuilder sb = new StringBuilder();
 
         // 列番号の並び
-        sb.append(" 12345678");
+        // 先頭の空白は行列の交差する部分を示す
+        sb.append(" " + COL_NUMBERS);
         sb.append(System.lineSeparator());
 
         // 行番号と各フィールドの値が1行分の値
@@ -301,8 +324,12 @@ public class Field {
             for (int c = 0; c < COL; c++) {
                 sb.append(field[r][c]);
             }
+            sb.append(alphabets[r]);
             sb.append(System.lineSeparator());
         }
+
+        sb.append(" " + COL_NUMBERS);
+        sb.append(System.lineSeparator());
 
         return sb.toString();
     }

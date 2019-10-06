@@ -1,64 +1,48 @@
 package othello;
 
 /**
- * コマの値と色を保持する.
- *
- * 白は-1, 黒は1, なにもない場所は0とする
+ * コマの色を保持する.
  */
 public enum PieceType {
-    WHITE(-1, "○"),
-    BLACK(1, "●"),
-    EMPTY(0, "・");
-
-    /**
-     * コマの値.
-     */
-    private int value;
+    WHITE("○"),
+    BLACK("●"),
+    EMPTY("・");
 
     /**
      * コマの表示に使用する文字.
      */
     private String image;
 
-    PieceType(int value, String image) {
-        this.value = value;
+    PieceType(String image) {
         this.image = image;
     }
 
     /**
-     * コマの値を取得するgetterメソッド.
+     * 反対のコマを取得する.
+     * <p>引数が白なら黒、引数が黒なら白を返す</p>
+     * <p>空きの場合は空きを返す</p>
      *
-     * 黒なら1, 白なら-1, 空きなら0
-     * @return コマの値
+     * @param pieceType コマのタイプ
+     * @return 反対のコマ
      */
-    public int getValue() {
-        return value;
+    public static PieceType getEnemyType(PieceType pieceType) {
+        if (pieceType == PieceType.BLACK) {
+            return PieceType.WHITE;
+        } else if (pieceType == PieceType.WHITE) {
+            return PieceType.BLACK;
+        } else {
+            return PieceType.EMPTY;
+        }
     }
 
     /**
-     * コマの表示に使用する文字を取得するgetterメソッド.
+     * コマの表示に使用する文字を取得する
      *
-     * 黒なら●, 白なら○, 空きなら・
      * @return コマを表す文字
      */
-    public String getImage() {
+    @Override
+    public String toString() {
         return image;
-    }
-
-    /**
-     * 入力した数値を対応するコマに変換する.
-     *
-     * @param value 入力する値(黒なら1, 白なら-1, 空きなら0)
-     * @return 対応するコマ
-     */
-    public static PieceType getType(int value) {
-        PieceType[] pieceTypes = PieceType.values();
-        for (PieceType p : pieceTypes) {
-            if (p.getValue() == value) {
-                return p;
-            }
-        }
-        return null;
     }
 
 }
