@@ -2,6 +2,9 @@ package othello;
 
 import java.util.Scanner;
 
+/**
+ * オセロのゲームを進行するメインクラス
+ */
 public class Main {
     public static void main(String[] args) {
         Field othello = new Field();
