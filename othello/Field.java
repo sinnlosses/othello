@@ -165,7 +165,7 @@ public class Field {
      * @param inpCol 置くコマの列番号
      * @return コマを置くことができるかどうか
      */
-    public boolean canPutPiece(int inpRow, int inpCol) {
+    public boolean canPutPiece(final int inpRow, final int inpCol) {
         // フィールド外に置こうとした場合
         if (!isInsideField(inpRow, inpCol)) {
             return false;
@@ -194,7 +194,7 @@ public class Field {
      * @param inpRow コマの行番号
      * @param inpCol コマの列番号
      */
-    public void flipPiecesFromPlaced(int inpRow, int inpCol) {
+    public void flipPiecesFromPlaced(final int inpRow, final int inpCol) {
         for (int r = inpRow - 1; r <= inpRow + 1; r++) {
             for (int c = inpCol - 1; c <= inpCol + 1; c++) {
                 // 自分のコマが調べる方向の先にあるか
@@ -213,7 +213,7 @@ public class Field {
      * @param inpRow 置く行番号
      * @param inpCol 置く列番号
      */
-    public void putPiece(int inpRow, int inpCol) {
+    public void putPiece(final int inpRow, final int inpCol) {
         field[inpRow][inpCol].setState(currentTurn);
     }
 
@@ -268,7 +268,10 @@ public class Field {
      * @param inpCol 置く列番号
      * @return 自分のコマがあるかどうか
      */
-    private boolean existOwnPieceAhead(int vectorR, int vectorC, int inpRow, int inpCol) {
+    private boolean existOwnPieceAhead(final int vectorR,
+                                       final int vectorC,
+                                       final int inpRow,
+                                       final int inpCol) {
 
         // 1つとなりの状態が外部、または自分のコマならfalse
         int movedR = inpRow + vectorR;
@@ -333,7 +336,10 @@ public class Field {
      * @param inpRow 置いた行番号
      * @param inpCol 置いた列番号
      */
-    private void flipBetweenOwnPieces(int vectorR, int vectorC, int inpRow, int inpCol) {
+    private void flipBetweenOwnPieces(final int vectorR,
+                                      final int vectorC,
+                                      final int inpRow,
+                                      final int inpCol) {
         int movedR = inpRow + vectorR;
         int movedC = inpCol + vectorC;
 
@@ -353,7 +359,7 @@ public class Field {
      * @param inpCol 列番号
      * @return フィールドの内部ならtrue, 外部ならfalse
      */
-    private boolean isInsideField(int inpRow, int inpCol) {
+    private boolean isInsideField(final int inpRow, final int inpCol) {
         return 0 <= inpRow && inpRow < ROW && 0 <= inpCol && inpCol < COL;
     }
 }

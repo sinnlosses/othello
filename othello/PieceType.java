@@ -25,7 +25,7 @@ public enum PieceType {
      * @param pieceType コマのタイプ
      * @return 反対のコマ
      */
-    public static PieceType getEnemyType(PieceType pieceType) {
+    public static PieceType getEnemyType(final PieceType pieceType) {
         if (pieceType == PieceType.BLACK) {
             return PieceType.WHITE;
         } else if (pieceType == PieceType.WHITE) {
