@@ -75,14 +75,14 @@ public class Field {
 
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
-                this.field[r][c] = new Piece();
+                field[r][c] = new Piece();
             }
         }
 
-        this.field[3][3].setState(PieceType.BLACK);
-        this.field[4][3].setState(PieceType.WHITE);
-        this.field[3][4].setState(PieceType.WHITE);
-        this.field[4][4].setState(PieceType.BLACK);
+        field[3][3].setState(PieceType.BLACK);
+        field[4][3].setState(PieceType.WHITE);
+        field[3][4].setState(PieceType.WHITE);
+        field[4][4].setState(PieceType.BLACK);
 
         currentTurn = PieceType.WHITE;
     }
@@ -129,7 +129,7 @@ public class Field {
     /**
      * 現在の黒と白の数を出力する.
      */
-    public void printCurrentSituation() {
+    public void printCurrentScores() {
         Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
         System.out.println(PieceType.BLACK.toString() + " : " + piecesCnt.get(PieceType.BLACK));
         System.out.println(PieceType.WHITE.toString() + " : " + piecesCnt.get(PieceType.WHITE));

@@ -46,7 +46,7 @@ public class Main {
             othello.flipPiecesFromPlaced(inputRow, inputCol);
 
             othello.printField();
-            othello.printCurrentSituation();
+            othello.printCurrentScores();
             othello.nextPlayer();
         }
 
