@@ -84,7 +84,7 @@ public class Field {
         field[3][4].setState(PieceType.WHITE);
         field[4][4].setState(PieceType.BLACK);
 
-        currentTurn = PieceType.WHITE;
+        currentTurn = PieceType.BLACK;
     }
 
     /**
@@ -143,7 +143,7 @@ public class Field {
     public boolean canPutForCurrentTurn() {
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
-                if (canPutPiece(r, c)) {
+                if (canPutPiece(new Coordinate(r, c))) {
                     return true;
                 }
             }
@@ -161,13 +161,14 @@ public class Field {
      *    <li>3. 挟むコマが存在するかどうか</li>
      * </ul>
      *
-     * @param inpRow 置くコマの行番号
-     * @param inpCol 置くコマの列番号
+     * @param coordinate 置く座標
      * @return コマを置くことができるかどうか
      */
-    public boolean canPutPiece(final int inpRow, final int inpCol) {
+    public boolean canPutPiece(final Coordinate coordinate) {
+        int inpRow = coordinate.getRow();
+        int inpCol = coordinate.getCol();
         // フィールド外に置こうとした場合
-        if (!isInsideField(inpRow, inpCol)) {
+        if (!isInsideField(new Coordinate(inpRow, inpCol))) {
             return false;
         }
         // すでにコマが置かれていた場合
@@ -178,7 +179,8 @@ public class Field {
         for (int r = inpRow - 1; r <= inpRow + 1; r++) {
             for (int c = inpCol - 1; c <= inpCol + 1; c++) {
                 // 自分のコマが調べる方向の先にあるか
-                if (!existOwnPieceAhead(r - inpRow, c - inpCol, inpRow, inpCol)) {
+                if (!existOwnPieceAhead(new Coordinate(r,c),
+                        new Vector(r-inpRow, c-inpCol))) {
                     continue;
                 }
                 // 挟むコマがある場合
@@ -191,18 +193,21 @@ public class Field {
     /**
      * 指定したコマの座標から見て周囲8方向に対して自分のコマで挟んでいる相手のコマをひっくり返す.
      *
-     * @param inpRow コマの行番号
-     * @param inpCol コマの列番号
+     * @param coordinate ひっくり返す始点となるコマの座標
      */
-    public void flipPiecesFromPlaced(final int inpRow, final int inpCol) {
+    public void flipPiecesFromPlaced(final Coordinate coordinate) {
+        int inpRow = coordinate.getRow();
+        int inpCol = coordinate.getCol();
+
         for (int r = inpRow - 1; r <= inpRow + 1; r++) {
             for (int c = inpCol - 1; c <= inpCol + 1; c++) {
+                Vector vector = new Vector(r-inpRow, c-inpCol);
                 // 自分のコマが調べる方向の先にあるか
-                if (!existOwnPieceAhead(r - inpRow, c - inpCol, inpRow, inpCol)) {
+                if (!existOwnPieceAhead(new Coordinate(r, c), vector)) {
                     continue;
                 }
                 // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
-                flipBetweenOwnPieces(r - inpRow, c - inpCol, inpRow, inpCol);
+                flipBetweenOwnPieces(new Coordinate(inpRow, inpCol), vector);
             }
         }
     }
@@ -210,10 +215,12 @@ public class Field {
     /**
      * 指定した座標にコマを置く.
      *
-     * @param inpRow 置く行番号
-     * @param inpCol 置く列番号
+     * @param coordinate 置く座標
      */
-    public void putPiece(final int inpRow, final int inpCol) {
+    public void putPiece(final Coordinate coordinate) {
+        int inpRow = coordinate.getRow();
+        int inpCol = coordinate.getCol();
+
         field[inpRow][inpCol].setState(currentTurn);
     }
 
@@ -262,22 +269,22 @@ public class Field {
     /**
      * コマを置いた場所から見て指定された方向の先に自分のコマがあるか調べる.
      *
-     * @param vectorR 調べる行方向
-     * @param vectorC 調べる列方向
-     * @param inpRow 置く行番号
-     * @param inpCol 置く列番号
+     * @param coordinate 置く座標
+     * @param vector
      * @return 自分のコマがあるかどうか
      */
-    private boolean existOwnPieceAhead(final int vectorR,
-                                       final int vectorC,
-                                       final int inpRow,
-                                       final int inpCol) {
+    private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
+
+        int inpRow = coordinate.getRow();
+        int inpCol = coordinate.getCol();
+        int vectorR = vector.getVectorR();
+        int vectorC = vector.getVectorC();
 
         // 1つとなりの状態が外部、または自分のコマならfalse
         int movedR = inpRow + vectorR;
         int movedC = inpCol + vectorC;
 
-        if (!isInsideField(movedR, movedC)) {
+        if (!isInsideField(new Coordinate(movedR, movedC))) {
             return false;
         }
 
@@ -289,7 +296,7 @@ public class Field {
         // 次の座標に移動して相手のコマを挟んでいるか調べる
         movedR += vectorR;
         movedC += vectorC;
-        while (isInsideField(movedR, movedC)) {
+        while (isInsideField(new Coordinate(movedR, movedC))) {
             if (field[movedR][movedC].getState() == currentTurn) {
                 return true;
             }
@@ -330,16 +337,15 @@ public class Field {
      * <br>
      * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている
      * そのためフィールドの内部かどうかをわざわざ調べていない
-     *
-     * @param vectorR ひっくり返していく行方向
-     * @param vectorC ひっくり返してく列方向
-     * @param inpRow 置いた行番号
-     * @param inpCol 置いた列番号
+     * @param coordinate ひっくり返す始点となる座標
+     * @param vector ひっくり返す方向
      */
-    private void flipBetweenOwnPieces(final int vectorR,
-                                      final int vectorC,
-                                      final int inpRow,
-                                      final int inpCol) {
+    private void flipBetweenOwnPieces(final Coordinate coordinate, final Vector vector) {
+        int inpRow = coordinate.getRow();
+        int inpCol = coordinate.getCol();
+        int vectorR = vector.getVectorR();
+        int vectorC = vector.getVectorC();
+
         int movedR = inpRow + vectorR;
         int movedC = inpCol + vectorC;
 
@@ -355,11 +361,13 @@ public class Field {
     /**
      * 座標を指定してフィールドの内部かどうかを判定する.
      *
-     * @param inpRow 行番号
-     * @param inpCol 列番号
+     * @param coordinate 調べる対象の座標
      * @return フィールドの内部ならtrue, 外部ならfalse
      */
-    private boolean isInsideField(final int inpRow, final int inpCol) {
+    private boolean isInsideField(Coordinate coordinate) {
+        int inpRow = coordinate.getRow();
+        int inpCol = coordinate.getCol();
+
         return 0 <= inpRow && inpRow < ROW && 0 <= inpCol && inpCol < COL;
     }
 }

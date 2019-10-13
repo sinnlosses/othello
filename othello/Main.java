@@ -34,7 +34,7 @@ public class Main {
                 inputCol = Field.toColNumber(inputCoordinate[1]);
 
                 // 入力が有効なら入力完了としてループを抜ける
-                if (othello.canPutPiece(inputRow, inputCol)) {
+                if (othello.canPutPiece(new Coordinate(inputRow, inputCol))) {
                     break;
                 }
 
@@ -42,8 +42,9 @@ public class Main {
             }
 
             // コマを置き、挟んだコマをひっくり返す
-            othello.putPiece(inputRow, inputCol);
-            othello.flipPiecesFromPlaced(inputRow, inputCol);
+            Coordinate coordinate = new Coordinate(inputRow, inputCol);
+            othello.putPiece(coordinate);
+            othello.flipPiecesFromPlaced(coordinate);
 
             othello.printField();
             othello.printCurrentScores();
