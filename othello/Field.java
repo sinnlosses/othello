@@ -1,5 +1,6 @@
 package othello;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,10 +80,10 @@ public class Field {
             }
         }
 
-        field[3][3].setState(PieceType.BLACK);
-        field[4][3].setState(PieceType.WHITE);
-        field[3][4].setState(PieceType.WHITE);
-        field[4][4].setState(PieceType.BLACK);
+        field[3][3].setState(PieceType.WHITE);
+        field[4][3].setState(PieceType.BLACK);
+        field[3][4].setState(PieceType.BLACK);
+        field[4][4].setState(PieceType.WHITE);
 
         currentTurn = PieceType.BLACK;
     }
@@ -165,8 +166,8 @@ public class Field {
      * @return コマを置くことができるかどうか
      */
     public boolean canPutPiece(final Coordinate coordinate) {
-        int inpRow = coordinate.getRow();
-        int inpCol = coordinate.getCol();
+        final int inpRow = coordinate.getRow();
+        final int inpCol = coordinate.getCol();
         // フィールド外に置こうとした場合
         if (!isInsideField(new Coordinate(inpRow, inpCol))) {
             return false;
@@ -179,7 +180,7 @@ public class Field {
         for (int r = inpRow - 1; r <= inpRow + 1; r++) {
             for (int c = inpCol - 1; c <= inpCol + 1; c++) {
                 // 自分のコマが調べる方向の先にあるか
-                if (!existOwnPieceAhead(new Coordinate(r,c),
+                if (!existOwnPieceAhead(new Coordinate(inpRow,inpCol),
                         new Vector(r-inpRow, c-inpCol))) {
                     continue;
                 }
@@ -196,14 +197,14 @@ public class Field {
      * @param coordinate ひっくり返す始点となるコマの座標
      */
     public void flipPiecesFromPlaced(final Coordinate coordinate) {
-        int inpRow = coordinate.getRow();
-        int inpCol = coordinate.getCol();
+        final int inpRow = coordinate.getRow();
+        final int inpCol = coordinate.getCol();
 
         for (int r = inpRow - 1; r <= inpRow + 1; r++) {
             for (int c = inpCol - 1; c <= inpCol + 1; c++) {
                 Vector vector = new Vector(r-inpRow, c-inpCol);
                 // 自分のコマが調べる方向の先にあるか
-                if (!existOwnPieceAhead(new Coordinate(r, c), vector)) {
+                if (!existOwnPieceAhead(new Coordinate(inpRow, inpCol), vector)) {
                     continue;
                 }
                 // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
@@ -218,8 +219,8 @@ public class Field {
      * @param coordinate 置く座標
      */
     public void putPiece(final Coordinate coordinate) {
-        int inpRow = coordinate.getRow();
-        int inpCol = coordinate.getCol();
+        final int inpRow = coordinate.getRow();
+        final int inpCol = coordinate.getCol();
 
         field[inpRow][inpCol].setState(currentTurn);
     }
@@ -239,7 +240,7 @@ public class Field {
     @Override
     public String toString() {
 
-        String lineSeparator = System.lineSeparator();
+        final String lineSeparator = System.lineSeparator();
         String[] alphabets = ROW_ALPHABETS.split("");
         String colNumbers = "  " + String.join(" ", COL_NUMBERS.split(""));
         StringBuilder sb = new StringBuilder();
@@ -275,10 +276,10 @@ public class Field {
      */
     private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
 
-        int inpRow = coordinate.getRow();
-        int inpCol = coordinate.getCol();
-        int vectorR = vector.getVectorR();
-        int vectorC = vector.getVectorC();
+        final int inpRow = coordinate.getRow();
+        final int inpCol = coordinate.getCol();
+        final int vectorR = vector.getVectorR();
+        final int vectorC = vector.getVectorC();
 
         // 1つとなりの状態が外部、または自分のコマならfalse
         int movedR = inpRow + vectorR;
@@ -316,7 +317,7 @@ public class Field {
      * @return 白、黒、空きのコマの数のマップ
      */
     private Map<PieceType, Integer> getEachPiecesCnt() {
-        Map<PieceType, Integer> PiecesCnt = new HashMap<>();
+        Map<PieceType, Integer> PiecesCnt = new EnumMap<>(PieceType.class);
         PiecesCnt.put(PieceType.BLACK, 0);
         PiecesCnt.put(PieceType.WHITE, 0);
         PiecesCnt.put(PieceType.EMPTY, 0);
@@ -341,11 +342,12 @@ public class Field {
      * @param vector ひっくり返す方向
      */
     private void flipBetweenOwnPieces(final Coordinate coordinate, final Vector vector) {
-        int inpRow = coordinate.getRow();
-        int inpCol = coordinate.getCol();
-        int vectorR = vector.getVectorR();
-        int vectorC = vector.getVectorC();
+        final int inpRow = coordinate.getRow();
+        final int inpCol = coordinate.getCol();
+        final int vectorR = vector.getVectorR();
+        final int vectorC = vector.getVectorC();
 
+        // 移動していく座標の変数
         int movedR = inpRow + vectorR;
         int movedC = inpCol + vectorC;
 
@@ -365,8 +367,8 @@ public class Field {
      * @return フィールドの内部ならtrue, 外部ならfalse
      */
     private boolean isInsideField(Coordinate coordinate) {
-        int inpRow = coordinate.getRow();
-        int inpCol = coordinate.getCol();
+        final int inpRow = coordinate.getRow();
+        final int inpCol = coordinate.getCol();
 
         return 0 <= inpRow && inpRow < ROW && 0 <= inpCol && inpCol < COL;
     }
