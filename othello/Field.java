@@ -310,9 +310,9 @@ public class Field {
      */
     private Map<PieceType, Integer> getEachPiecesCnt() {
         Map<PieceType, Integer> PiecesCnt = new EnumMap<>(PieceType.class);
-        PiecesCnt.put(PieceType.BLACK, 0);
-        PiecesCnt.put(PieceType.WHITE, 0);
-        PiecesCnt.put(PieceType.EMPTY, 0);
+        for (PieceType pieceType : PieceType.values()) {
+            PiecesCnt.put(pieceType, 0);
+        }
 
         // 各フィールドの数をカウントする
         for (int r = 0; r < ROW; r++) {
