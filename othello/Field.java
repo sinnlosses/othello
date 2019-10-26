@@ -233,22 +233,17 @@ public class Field {
 
         // 列番号の並び
         // 先頭の空白は行列の交差する部分を示す
-        sb.append(colNumbers);
-        sb.append(lineSeparator);
+        sb.append(colNumbers).append(lineSeparator);
 
         // 行番号と各フィールドの値が1行分の値
         for (int r = 0; r < ROW; r++) {
-            sb.append(alphabets[r]);
-            sb.append(" ");
+            sb.append(alphabets[r]).append(" ");
             for (int c = 0; c < COL; c++) {
                 sb.append(field[r][c]).append(" ");
             }
-            sb.append(alphabets[r]);
-            sb.append(lineSeparator);
+            sb.append(alphabets[r]).append(lineSeparator);
         }
-
-        sb.append(colNumbers);
-        sb.append(lineSeparator);
+        sb.append(colNumbers).append(lineSeparator);
 
         return sb.toString();
     }

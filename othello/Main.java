@@ -26,10 +26,14 @@ public class Main {
             int inputCol;
             while (true) {
                 System.out.println("コマを置く座標の行と列を空白区切りで入力してください");
-                System.out.println("行--->(a,b,c...,h), 列--->(1,2...,8)");
+                System.out.println("行--->(a,b,c,...,h), 列--->(1,2,3,...,8)");
                 System.out.println("例: a 1");
 
                 String[] inputCoordinate = new Scanner(System.in).nextLine().split(" ");
+
+                if (inputCoordinate.length != 2) {
+                    continue;
+                }
                 inputRow = Field.toRowNumber(inputCoordinate[0]);
                 inputCol = Field.toColNumber(inputCoordinate[1]);
 
