@@ -1,12 +1,18 @@
 package othello;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * オセロのフィールドを構築するクラス.
  *
+ * 役割
+ * <ul>
+ * <li>現在のプレイヤーの管理</li>
+ * <li>フィールドの状態管理</li>
+ * <li>フィールドへのコマの設置</li>
+ * <li>スコア管理</li>
+ * </ul>
  */
 public class Field {
     /**
@@ -22,14 +28,14 @@ public class Field {
      *
      * <pre>a → 0, b → 1 ... h → 7</pre>
      *
-     * @param alRow 変換するアルファベット
-     * @return 対応する行番号
+     * @param alphabetRow 変換するアルファベット
+     * @return 対応する行番号(対応する行番号がない場合-1)
      */
-    public static int toRowNumber(final String alRow) {
-        if (alRow.trim().length() != 1) {
+    public static int toRowNumber(final String alphabetRow) {
+        if (alphabetRow.trim().length() != 1) {
             return -1;
         }
-        return ROW_ALPHABETS.indexOf(alRow.trim().toUpperCase());
+        return ROW_ALPHABETS.indexOf(alphabetRow.trim().toUpperCase());
     }
     /**
      * 番号を対応する列番号に変換する.
@@ -37,7 +43,7 @@ public class Field {
      * <pre> 1 → 0, 2 → 1, ..., 8 → 7</pre>
      *
      * @param col 変換対象の番号
-     * @return 対応する列番号
+     * @return 対応する列番号(対応する列番号が存在しない場合-1)
      */
     public static int toColNumber(final String col) {
         if (col.trim().length() != 1) {
@@ -63,12 +69,12 @@ public class Field {
     private PieceType currentTurn;
 
     /**
-     * コンストラクタ.
+     * フィールドを生成するコンストラクタ.
      * <br>
-     * 行われることは以下
+     * 初期化される項目は以下
      * <ul>
-     *     <li>1. フィールドの初期化</li>
-     *     <li>2. プレイヤーの初期化</li>
+     *     <li>フィールド. すべて空の状態</li>
+     *     <li>プレイヤーの手番.</li>
      * </ul>
      */
     public Field() {
@@ -89,9 +95,9 @@ public class Field {
     }
 
     /**
-     * 現在の手番を返すgetter.
+     * 現在の手番を返す.
      *
-     * @return 現在の手番
+     * @return 現在の手番を表すコマの種類
      */
     public PieceType getCurrentTurn() {
         return currentTurn;
@@ -107,18 +113,13 @@ public class Field {
     /**
      * ゲームが終了したかどうかを判定する.
      *
-     * <p>ゲームが終了したかどうかはフィールドの各値の数をカウントし、
-     * 0となっているものがあるかどうかで判定できる</p>
-     *
-     * <p>もし白、黒のコマが0であればすべて相手によってひっくり返されたと判定でき、
-     * 空きが0ならすべてコマで埋まったと判定できるため</p>
-     *
      * @return ゲームが終わったならtrue, まだであればfalse
      */
     public boolean isGameOver() {
         Map<PieceType, Integer> PiecesCnt = getEachPiecesCnt();
 
         // White, Empty, Black、どれか1つでも0なら勝負がついたと判定できる
+        // White, Blackが0なら片方がすべて取られたことを意味し、Emptyが0ならフィールドが埋まったことを意味する
         for (int cnt : PiecesCnt.values()) {
             if (cnt == 0) {
                 return true;
@@ -128,7 +129,7 @@ public class Field {
     }
 
     /**
-     * 現在の黒と白の数を出力する.
+     * 現在の黒と白のコマの数をそれぞれ標準出力する.
      */
     public void printCurrentScores() {
         Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
@@ -144,7 +145,7 @@ public class Field {
     public boolean canPutForCurrentTurn() {
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
-                if (canPutPiece(new Coordinate(r, c))) {
+                if (canPutPiece(Coordinate.valueOf(r, c))) {
                     return true;
                 }
             }
@@ -154,13 +155,7 @@ public class Field {
 
     /**
      * コマを置くことができるかどうかを判定する.
-     * <br>
-     * 具体的には以下の3つを調べる
-     * <ul>
-     *    <li>1. フィールドの内部に置かれているかどうか</li>
-     *    <li>2. まだコマが置かれていない場所かどうか</li>
-     *    <li>3. 挟むコマが存在するかどうか</li>
-     * </ul>
+     * 前提として, 入力座標はフィールドの範囲外であってもよい(例外は排出しない).
      *
      * @param coordinate 置く座標
      * @return コマを置くことができるかどうか
@@ -169,7 +164,7 @@ public class Field {
         final int inpRow = coordinate.getRow();
         final int inpCol = coordinate.getCol();
         // フィールド外に置こうとした場合
-        if (!isInsideField(new Coordinate(inpRow, inpCol))) {
+        if (!isInsideField(Coordinate.valueOf(inpRow, inpCol))) {
             return false;
         }
         // すでにコマが置かれていた場合
@@ -208,7 +203,11 @@ public class Field {
     /**
      * 指定した座標にコマを置く.
      *
-     * @param coordinate 置く座標
+     * 前提として, 座標は正しく設定されていること.
+     * また, すでにコマが置かれていたとしてもエラーとならず、
+     * 指定した座標のコマは現在の手番のコマの状態となる.
+     *
+     * @param coordinate コマを置く座標
      */
     public void putPiece(final Coordinate coordinate) {
         final int inpRow = coordinate.getRow();
@@ -270,14 +269,14 @@ public class Field {
 
         final int inpRow = coordinate.getRow();
         final int inpCol = coordinate.getCol();
-        final int vectorR = vector.getVectorR();
-        final int vectorC = vector.getVectorC();
+        final int vectorR = vector.getVectorRow();
+        final int vectorC = vector.getVectorCol();
 
         // 1つとなりの状態が外部、または自分のコマならfalse
         int movedR = inpRow + vectorR;
         int movedC = inpCol + vectorC;
 
-        if (!isInsideField(new Coordinate(movedR, movedC))) {
+        if (!isInsideField(Coordinate.valueOf(movedR, movedC))) {
             return false;
         }
 
@@ -289,7 +288,7 @@ public class Field {
         // 次の座標に移動して相手のコマを挟んでいるか調べる
         movedR += vectorR;
         movedC += vectorC;
-        while (isInsideField(new Coordinate(movedR, movedC))) {
+        while (isInsideField(Coordinate.valueOf(movedR, movedC))) {
             if (field[movedR][movedC].getState() == currentTurn) {
                 return true;
             }
@@ -329,26 +328,26 @@ public class Field {
      * コマを置いた場所から見て指定された方向に向かって相手のコマをひっくり返していく.
      * <br>
      * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている
-     * そのためフィールドの内部かどうかをわざわざ調べていない
+     * そのためフィールドの内部かどうかを調べていない
      * @param coordinate ひっくり返す始点となる座標
      * @param vector ひっくり返す方向
      */
     private void flipBetweenOwnPieces(final Coordinate coordinate, final Vector vector) {
-        final int inpRow = coordinate.getRow();
-        final int inpCol = coordinate.getCol();
-        final int vectorR = vector.getVectorR();
-        final int vectorC = vector.getVectorC();
+        final int inputRow = coordinate.getRow();
+        final int inputCol = coordinate.getCol();
+        final int vectorRow = vector.getVectorRow();
+        final int vectorCol = vector.getVectorCol();
 
         // 移動していく座標の変数
-        int movedR = inpRow + vectorR;
-        int movedC = inpCol + vectorC;
+        int movedRow = inputRow + vectorRow;
+        int movedCol = inputCol + vectorCol;
 
         // 自分のコマにたどり着くまで相手のコマをひっくり返していく
-        while (field[movedR][movedC].getState() != currentTurn) {
-            field[movedR][movedC].flip();
+        while (field[movedRow][movedCol].getState() != currentTurn) {
+            field[movedRow][movedCol].flip();
 
-            movedR += vectorR;
-            movedC += vectorC;
+            movedRow += vectorRow;
+            movedCol += vectorCol;
         }
     }
 

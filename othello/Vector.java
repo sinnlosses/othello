@@ -2,6 +2,15 @@ package othello;
 
 /**
  * 方向を表すクラス.
+ *
+ * 左上, 上, 右上,
+ * 左, 右,
+ * 左下, 下, 右下,
+ * 上記の方向を保持する.
+ * 各項目は行および列の方向を表す整数型の値を
+ * 状態として持つ
+ *
+ * 例 : 左上 = (-1, -1)
  */
 public enum Vector {
     LEFT_UPPER(-1, -1),
@@ -14,17 +23,17 @@ public enum Vector {
     RIGHT_DOWN(1, 1);
 
     /**
-     * 行方向
+     * 行方向.
      */
-    private int vectorR;
+    private int vectorRow;
     /**
-     * 列方向
+     * 列方向.
      */
-    private int vectorC;
+    private int vectorCol;
 
-    Vector(int vectorR, int vectorC) {
-        this.vectorR = vectorR;
-        this.vectorC = vectorC;
+    Vector(int vectorRow, int vectorCol) {
+        this.vectorRow = vectorRow;
+        this.vectorCol = vectorCol;
     }
 
     /**
@@ -32,8 +41,8 @@ public enum Vector {
      *
      * @return 行方向
      */
-    public int getVectorR() {
-        return vectorR;
+    public int getVectorRow() {
+        return vectorRow;
     }
 
     /**
@@ -41,7 +50,7 @@ public enum Vector {
      *
      * @return 列方向
      */
-    public int getVectorC() {
-        return vectorC;
+    public int getVectorCol() {
+        return vectorCol;
     }
 }
