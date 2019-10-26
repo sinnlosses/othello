@@ -63,7 +63,7 @@ public final class Coordinate {
 
     /**
      * コンストラクタで設定した座標の情報を返す.
-     * 
+     *
      * @return 行番号と列番号
      */
     @Override

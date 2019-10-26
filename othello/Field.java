@@ -107,7 +107,7 @@ public class Field {
      * 手番を次に移す.
      */
     public void nextPlayer() {
-        currentTurn = PieceType.getEnemyType(currentTurn);
+        currentTurn = Piece.getEnemyType(currentTurn);
     }
 
     /**
@@ -161,14 +161,12 @@ public class Field {
      * @return コマを置くことができるかどうか
      */
     public boolean canPutPiece(final Coordinate coordinate) {
-        final int inpRow = coordinate.getRow();
-        final int inpCol = coordinate.getCol();
         // フィールド外に置こうとした場合
-        if (!isInsideField(Coordinate.valueOf(inpRow, inpCol))) {
+        if (!isInsideField(coordinate)) {
             return false;
         }
         // すでにコマが置かれていた場合
-        if (!field[inpRow][inpCol].isEmpty()) {
+        if (!field[coordinate.getRow()][coordinate.getCol()].isEmpty()) {
             return false;
         }
 
@@ -210,10 +208,7 @@ public class Field {
      * @param coordinate コマを置く座標
      */
     public void putPiece(final Coordinate coordinate) {
-        final int inpRow = coordinate.getRow();
-        final int inpCol = coordinate.getCol();
-
-        field[inpRow][inpCol].setState(currentTurn);
+        field[coordinate.getRow()][coordinate.getCol()].setState(currentTurn);
     }
 
     /**
@@ -280,7 +275,7 @@ public class Field {
             return false;
         }
 
-        PieceType enemy = PieceType.getEnemyType(currentTurn);
+        PieceType enemy = Piece.getEnemyType(currentTurn);
         if (field[movedR][movedC].getState() != enemy ) {
             return false;
         }
