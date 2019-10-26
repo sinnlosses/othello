@@ -2,8 +2,9 @@ package othello;
 
 /**
  * コマの状態を保持、操作するクラス.
+ *
  */
-public class Piece {
+final public class Piece {
 
     /**
      * コマの状態

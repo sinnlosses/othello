@@ -3,7 +3,16 @@ package othello;
 /**
  * 方向を表すクラス.
  */
-public class Vector {
+public enum Vector {
+    LEFT_UPPER(-1, -1),
+    UP(0, -1),
+    RIGHT_UPPER(1, -1),
+    LEFT(-1, 0),
+    RIGHT(1, 0),
+    LEFT_DOWN(-1, 1),
+    DOWN(0, 1),
+    RIGHT_DOWN(1, 1);
+
     /**
      * 行方向
      */
@@ -13,7 +22,7 @@ public class Vector {
      */
     private int vectorC;
 
-    public Vector(int vectorR, int vectorC) {
+    Vector(int vectorR, int vectorC) {
         this.vectorR = vectorR;
         this.vectorC = vectorC;
     }

@@ -176,17 +176,15 @@ public class Field {
         if (!field[inpRow][inpCol].isEmpty()) {
             return false;
         }
+
         // 置いたコマから見て周囲8方向に挟むコマがあるかどうかを調べる
-        for (int r = inpRow - 1; r <= inpRow + 1; r++) {
-            for (int c = inpCol - 1; c <= inpCol + 1; c++) {
-                // 自分のコマが調べる方向の先にあるか
-                if (!existOwnPieceAhead(new Coordinate(inpRow,inpCol),
-                        new Vector(r-inpRow, c-inpCol))) {
-                    continue;
-                }
-                // 挟むコマがある場合
-                return true;
+        for (Vector vector : Vector.values()) {
+            // 自分のコマが調べる方向の先にあるか
+            if (!existOwnPieceAhead(coordinate, vector)) {
+                continue;
             }
+            // 挟むコマがある場合
+            return true;
         }
         return false;
     }
@@ -197,19 +195,13 @@ public class Field {
      * @param coordinate ひっくり返す始点となるコマの座標
      */
     public void flipPiecesFromPlaced(final Coordinate coordinate) {
-        final int inpRow = coordinate.getRow();
-        final int inpCol = coordinate.getCol();
-
-        for (int r = inpRow - 1; r <= inpRow + 1; r++) {
-            for (int c = inpCol - 1; c <= inpCol + 1; c++) {
-                Vector vector = new Vector(r-inpRow, c-inpCol);
-                // 自分のコマが調べる方向の先にあるか
-                if (!existOwnPieceAhead(new Coordinate(inpRow, inpCol), vector)) {
-                    continue;
-                }
-                // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
-                flipBetweenOwnPieces(new Coordinate(inpRow, inpCol), vector);
+        for (Vector vector : Vector.values()) {
+            // 自分のコマが調べる方向の先にあるか
+            if (!existOwnPieceAhead(coordinate, vector)) {
+                continue;
             }
+            // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
+            flipBetweenOwnPieces(coordinate, vector);
         }
     }
 
@@ -271,7 +263,7 @@ public class Field {
      * コマを置いた場所から見て指定された方向の先に自分のコマがあるか調べる.
      *
      * @param coordinate 置く座標
-     * @param vector
+     * @param vector 調べる方向
      * @return 自分のコマがあるかどうか
      */
     private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
