@@ -7,13 +7,16 @@ import java.util.Map;
  * オセロのフィールドを構築するクラス.
  *
  * <p>
- * 役割
+ * 役割.
  * <ul>
  * <li>現在のプレイヤーの管理</li>
  * <li>フィールドの状態管理</li>
  * <li>フィールドへのコマの設置</li>
  * <li>スコア管理</li>
  * </ul>
+ *
+ * スレッドセーフであり, フィールドの描画時には同期がかかる.
+ *
  * </p>
  */
 public class Field {
@@ -78,9 +81,9 @@ public class Field {
      * フィールドを生成するコンストラクタ.
      *
      * <p>
-     * 初期化される項目は以下
+     * 初期化される項目は以下.
      * <ul>
-     *     <li>フィールド. すべて空の状態</li>
+     *     <li>フィールド. すべて空の状態.</li>
      *     <li>プレイヤーの手番.</li>
      * </ul>
      * </p>
@@ -121,7 +124,7 @@ public class Field {
     /**
      * ゲームが終了したかどうかを判定する.
      *
-     * @return ゲームが終わったならtrue, まだであればfalse
+     * @return ゲームが終わった場合 {@code true}
      */
     public boolean isGameOver() {
         Map<PieceType, Integer> PiecesCnt = getEachPiecesCnt();
@@ -148,7 +151,7 @@ public class Field {
     /**
      * 手番がコマを置くことができるかどうかを調べる.
      *
-     * @return コマを置くことができればtrue, そうでなければfalse
+     * @return コマを置くことができる場合 {@code true}
      */
     public boolean canPutForCurrentTurn() {
         for (int r = 0; r < ROW; r++) {
@@ -164,10 +167,12 @@ public class Field {
     /**
      * コマを置くことができるかどうかを判定する.
      *
+     * <p>
      * 入力座標はフィールドの範囲外であってもよい(例外は排出しない).
+     * </p>
      *
      * @param coordinate 置く座標
-     * @return コマを置くことができるかどうか
+     * @return コマを置くことができる場合 {@code true}
      */
     public boolean canPutPiece(final Coordinate coordinate) {
         // フィールド外に置こうとした場合
@@ -194,6 +199,11 @@ public class Field {
     /**
      * 指定したコマの座標から見て周囲8方向に対して自分のコマで挟んでいる相手のコマをひっくり返す.
      *
+     * 前提として手番のコマを置いた後に使用すること.
+     * 空の状態の座標を指定してもエラーは排出しない.
+     * この場合でも周囲8方向の先に手番のコマがある場合
+     * 相手のコマをひっくり返す.
+     *
      * @param coordinate ひっくり返す始点となるコマの座標
      */
     public void flipPiecesFromPlaced(final Coordinate coordinate) {
@@ -211,7 +221,7 @@ public class Field {
      * 指定した座標にコマを置く.
      *
      * <p>
-     * 前提として, 座標は正しく設定されていること.
+     * 前提として, 座標はフィールドの範囲内であること.
      * また, すでにコマが置かれていたとしてもエラーとならず、
      * 指定した座標のコマは現在の手番のコマの状態となる.
      * </p>
@@ -318,8 +328,8 @@ public class Field {
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
                 PieceType key = field[r][c].getState();
-                int cnt = PiecesCnt.get(field[r][c].getState());
-                PiecesCnt.put(key, ++cnt);
+                int cnt = PiecesCnt.get(key);
+                PiecesCnt.put(key, cnt + 1);
             }
         }
         return PiecesCnt;
@@ -329,8 +339,8 @@ public class Field {
      * 座標と方向を指定して, 挟んでいる相手のコマをひっくり返す.
      *
      * <p>
-     * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている
-     * そのためフィールドの外部に座標を指定するとエラーを排出する
+     * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている.
+     * そのためフィールドの外部に座標を指定するとエラーを排出する.
      * </p>
      *
      * @param coordinate ひっくり返す始点となる座標
@@ -359,7 +369,7 @@ public class Field {
      * 座標を指定してフィールドの内部かどうかを判定する.
      *
      * @param coordinate 調べる対象の座標
-     * @return フィールドの内部ならtrue, 外部ならfalse
+     * @return フィールドの内部の場合 {@code true}
      */
     private boolean isInsideField(Coordinate coordinate) {
         final int inputRow = coordinate.getRow();

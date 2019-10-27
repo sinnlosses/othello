@@ -6,7 +6,7 @@ package othello;
 public final class Piece {
 
     /**
-     * コマの状態
+     * コマの状態.
      */
     private PieceType state;
 

@@ -6,34 +6,34 @@ import java.util.List;
 /**
  * 座標を表すクラス.
  *
- * 行番号, 列番号を保持するが, 一度座標を設定すると
- * 取得はできるが設定し直すことはできない.
+ * 行番号, 列番号を保持する.
+ * 一度座標を設定すると取得はできるが再設定はできない.
  */
 public final class Coordinate {
     /**
-     * 生成された座標を保持するリスト
+     * 生成された座標を保持するリスト.
      */
     private static final List<Coordinate> coordinates = new ArrayList<>();
     /**
-     * 行番号
+     * 行番号.
      */
     private final int row;
     /**
-     * 列番号
+     * 列番号.
      */
     private final int col;
 
     /**
      * 本インスタンスを返すファクトリメソッド.
      *
-     * 指定した行番号と列番号に一致する座標がすでに保持されている場合それを返す.
-     * 新規の座標であれば新しくオブジェクトを生成して返す
+     * 指定した行番号と列番号に一致するオブジェクトがすでに保持されている場合それを返す.
+     * 新規であれば新しくオブジェクトを生成して返す.
      *
      * @param row 行番号
      * @param col 列番業
-     * @return 座標を設定したインスタンス
+     * @return インスタンス
      */
-    public synchronized static Coordinate valueOf(final int row, final int col) {
+    synchronized public static Coordinate valueOf(final int row, final int col) {
         for (Coordinate c : coordinates) {
             if (c.getRow() == row && c.getCol() == col) {
                 return c;

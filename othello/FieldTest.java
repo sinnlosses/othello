@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -172,15 +173,6 @@ class FieldTest {
     }
 
     @org.junit.jupiter.api.Test
-    void printField() {
-        othello.printField();
-    }
-
-    @org.junit.jupiter.api.Test
-    void testToString() {
-    }
-
-    @org.junit.jupiter.api.Test
     void testExistOwnPieceAhead() throws NoSuchMethodException,
             InvocationTargetException,
             IllegalAccessException, NoSuchFieldException {
@@ -197,4 +189,21 @@ class FieldTest {
         boolean exist = (boolean)refMethod.invoke(othello, Coordinate.valueOf(4, 5), Vector.LEFT);
         assertTrue(exist);
     }
+
+    @org.junit.jupiter.api.Test
+    void testGetEachPiecesCnt() throws NoSuchMethodException,
+                                        InvocationTargetException,
+                                        IllegalAccessException {
+        Class<?> othelloClass = othello.getClass();
+        Method ref = othelloClass.getDeclaredMethod("getEachPiecesCnt");
+        ref.setAccessible(true);
+
+        Map<PieceType, Integer> expected = (Map<PieceType, Integer>)ref.invoke(othello);
+
+        assertEquals(expected.get(PieceType.BLACK), 2);
+        assertEquals(expected.get(PieceType.WHITE), 2);
+        assertEquals(expected.get(PieceType.EMPTY), 60);
+    }
+
+
 }
