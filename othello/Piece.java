@@ -1,8 +1,7 @@
 package othello;
 
 /**
- * コマの状態を保持、操作するクラス.
- *
+ * コマの状態を保持、操作する.
  */
 public final class Piece {
 
@@ -13,6 +12,7 @@ public final class Piece {
 
     /**
      * 反対のコマを取得する.
+     *
      * <p>引数が白なら黒、引数が黒なら白を返す</p>
      * <p>空きの場合は空きを返す</p>
      *
@@ -30,9 +30,7 @@ public final class Piece {
     }
 
     /**
-     * コンストラクタ.
-     *
-     * 初期値は空き状態
+     * 空き状態を初期値とするコンストラクタ.
      */
     public Piece() {
         this.state = PieceType.EMPTY;

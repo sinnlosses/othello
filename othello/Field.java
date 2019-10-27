@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * オセロのフィールドを構築するクラス.
  *
+ * <p>
  * 役割
  * <ul>
  * <li>現在のプレイヤーの管理</li>
@@ -13,6 +14,7 @@ import java.util.Map;
  * <li>フィールドへのコマの設置</li>
  * <li>スコア管理</li>
  * </ul>
+ * </p>
  */
 public class Field {
     /**
@@ -26,7 +28,9 @@ public class Field {
     /**
      * アルファベットを対応する行番号に変換する.
      *
+     * <p>
      * <pre>a → 0, b → 1 ... h → 7</pre>
+     * </p>
      *
      * @param alphabetRow 変換するアルファベット
      * @return 対応する行番号(対応する行番号がない場合-1)
@@ -40,7 +44,9 @@ public class Field {
     /**
      * 番号を対応する列番号に変換する.
      *
+     * <p>
      * <pre> 1 → 0, 2 → 1, ..., 8 → 7</pre>
+     * </p>
      *
      * @param col 変換対象の番号
      * @return 対応する列番号(対応する列番号が存在しない場合-1)
@@ -70,12 +76,14 @@ public class Field {
 
     /**
      * フィールドを生成するコンストラクタ.
-     * <br>
+     *
+     * <p>
      * 初期化される項目は以下
      * <ul>
      *     <li>フィールド. すべて空の状態</li>
      *     <li>プレイヤーの手番.</li>
      * </ul>
+     * </p>
      */
     public Field() {
         field = new Piece[ROW][COL];
@@ -155,7 +163,8 @@ public class Field {
 
     /**
      * コマを置くことができるかどうかを判定する.
-     * 前提として, 入力座標はフィールドの範囲外であってもよい(例外は排出しない).
+     *
+     * 入力座標はフィールドの範囲外であってもよい(例外は排出しない).
      *
      * @param coordinate 置く座標
      * @return コマを置くことができるかどうか
@@ -201,9 +210,11 @@ public class Field {
     /**
      * 指定した座標にコマを置く.
      *
+     * <p>
      * 前提として, 座標は正しく設定されていること.
      * また, すでにコマが置かれていたとしてもエラーとならず、
      * 指定した座標のコマは現在の手番のコマの状態となる.
+     * </p>
      *
      * @param coordinate コマを置く座標
      */
@@ -257,36 +268,36 @@ public class Field {
      */
     private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
 
-        final int inpRow = coordinate.getRow();
-        final int inpCol = coordinate.getCol();
-        final int vectorR = vector.getVectorRow();
-        final int vectorC = vector.getVectorCol();
+        final int inputRow = coordinate.getRow();
+        final int inputCol = coordinate.getCol();
+        final int vectorRow = vector.getVectorRow();
+        final int vectorCol = vector.getVectorCol();
 
         // 1つとなりの状態が外部、または自分のコマならfalse
-        int movedR = inpRow + vectorR;
-        int movedC = inpCol + vectorC;
+        int movedRow = inputRow + vectorRow;
+        int movedCol = inputCol + vectorCol;
 
-        if (!isInsideField(Coordinate.valueOf(movedR, movedC))) {
+        if (!isInsideField(Coordinate.valueOf(movedRow, movedCol))) {
             return false;
         }
 
         PieceType enemy = Piece.getEnemyType(currentTurn);
-        if (field[movedR][movedC].getState() != enemy ) {
+        if (field[movedRow][movedCol].getState() != enemy ) {
             return false;
         }
 
         // 次の座標に移動して相手のコマを挟んでいるか調べる
-        movedR += vectorR;
-        movedC += vectorC;
-        while (isInsideField(Coordinate.valueOf(movedR, movedC))) {
-            if (field[movedR][movedC].getState() == currentTurn) {
+        movedRow += vectorRow;
+        movedCol += vectorCol;
+        while (isInsideField(Coordinate.valueOf(movedRow, movedCol))) {
+            if (field[movedRow][movedCol].getState() == currentTurn) {
                 return true;
             }
-            if (field[movedR][movedC].isEmpty()) {
+            if (field[movedRow][movedCol].isEmpty()) {
                 break;
             }
-            movedR += vectorR;
-            movedC += vectorC;
+            movedRow += vectorRow;
+            movedCol += vectorCol;
         }
 
         return false;
@@ -315,10 +326,13 @@ public class Field {
     }
 
     /**
-     * コマを置いた場所から見て指定された方向に向かって相手のコマをひっくり返していく.
-     * <br>
+     * 座標と方向を指定して, 挟んでいる相手のコマをひっくり返す.
+     *
+     * <p>
      * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている
-     * そのためフィールドの内部かどうかを調べていない
+     * そのためフィールドの外部に座標を指定するとエラーを排出する
+     * </p>
+     *
      * @param coordinate ひっくり返す始点となる座標
      * @param vector ひっくり返す方向
      */
@@ -348,9 +362,9 @@ public class Field {
      * @return フィールドの内部ならtrue, 外部ならfalse
      */
     private boolean isInsideField(Coordinate coordinate) {
-        final int inpRow = coordinate.getRow();
-        final int inpCol = coordinate.getCol();
+        final int inputRow = coordinate.getRow();
+        final int inputCol = coordinate.getCol();
 
-        return 0 <= inpRow && inpRow < ROW && 0 <= inpCol && inpCol < COL;
+        return 0 <= inputRow && inputRow < ROW && 0 <= inputCol && inputCol < COL;
     }
 }
