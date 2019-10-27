@@ -102,7 +102,7 @@ class FieldTest {
         othello.nextPlayer();
         PieceType changedState = othello.getCurrentTurn();
         assertEquals(PieceType.WHITE, changedState);
-;    }
+    }
 
     /**
      * 初期値の時点ではゲームオーバーではない
