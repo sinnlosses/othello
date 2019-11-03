@@ -144,8 +144,8 @@ public class Field {
      */
     public void printCurrentScores() {
         Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
-        System.out.println(PieceType.BLACK.toString() + " : " + piecesCnt.get(PieceType.BLACK));
-        System.out.println(PieceType.WHITE.toString() + " : " + piecesCnt.get(PieceType.WHITE));
+        System.out.println(PieceType.BLACK + " : " + piecesCnt.get(PieceType.BLACK));
+        System.out.println(PieceType.WHITE + " : " + piecesCnt.get(PieceType.WHITE));
     }
 
     /**
@@ -278,19 +278,18 @@ public class Field {
      */
     private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
 
-        final int inputRow = coordinate.getRow();
-        final int inputCol = coordinate.getCol();
         final int vectorRow = vector.getVectorRow();
         final int vectorCol = vector.getVectorCol();
 
-        // 1つとなりの状態が外部、または自分のコマならfalse
-        int movedRow = inputRow + vectorRow;
-        int movedCol = inputCol + vectorCol;
+        int movedRow = coordinate.getRow() + vectorRow;
+        int movedCol = coordinate.getCol() + vectorCol;
 
+        // 1つとなりの状態が外部なら指定方向に自分のコマはない
         if (!isInsideField(Coordinate.valueOf(movedRow, movedCol))) {
             return false;
         }
 
+        // 1つとなりの状態が自分のコマなら相手のコマを挟んでいない
         PieceType enemy = Piece.getEnemyType(currentTurn);
         if (field[movedRow][movedCol].getState() != enemy ) {
             return false;
@@ -328,8 +327,7 @@ public class Field {
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
                 PieceType key = field[r][c].getState();
-                int cnt = PiecesCnt.get(key);
-                PiecesCnt.put(key, cnt + 1);
+                PiecesCnt.put(key, PiecesCnt.get(key) + 1);
             }
         }
         return PiecesCnt;
@@ -347,14 +345,12 @@ public class Field {
      * @param vector ひっくり返す方向
      */
     private void flipBetweenOwnPieces(final Coordinate coordinate, final Vector vector) {
-        final int inputRow = coordinate.getRow();
-        final int inputCol = coordinate.getCol();
         final int vectorRow = vector.getVectorRow();
         final int vectorCol = vector.getVectorCol();
 
         // 移動していく座標の変数
-        int movedRow = inputRow + vectorRow;
-        int movedCol = inputCol + vectorCol;
+        int movedRow = coordinate.getRow() + vectorRow;
+        int movedCol = coordinate.getCol() + vectorCol;
 
         // 自分のコマにたどり着くまで相手のコマをひっくり返していく
         while (field[movedRow][movedCol].getState() != currentTurn) {

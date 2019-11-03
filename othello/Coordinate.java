@@ -8,6 +8,7 @@ import java.util.List;
  *
  * 行番号, 列番号を保持する.
  * 一度座標を設定すると取得はできるが再設定はできない.
+ * インスタンスの生成にはファクトリメソッドを通して行う.
  */
 public final class Coordinate {
     /**
