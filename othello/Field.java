@@ -15,8 +15,6 @@ import java.util.Map;
  * <li>スコア管理</li>
  * </ul>
  *
- * スレッドセーフであり, フィールドの描画時には同期がかかる.
- *
  * </p>
  */
 public class Field {
@@ -78,12 +76,12 @@ public class Field {
     private PieceType currentTurn;
 
     /**
-     * フィールドを生成するコンストラクタ.
+     * オセロのフィールドを生成する.
      *
      * <p>
      * 初期化される項目は以下.
      * <ul>
-     *     <li>フィールド. すべて空の状態.</li>
+     *     <li>フィールド. オセロにおける初期状態に設定される.</li>
      *     <li>プレイヤーの手番.</li>
      * </ul>
      * </p>
@@ -250,7 +248,7 @@ public class Field {
         final String lineSeparator = System.lineSeparator();
         String[] rowAlphabets = ROW_ALPHABETS.split("");
         String colNumbers = "  " + String.join(" ", COL_NUMBERS.split(""));
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         // 列番号の並び
         // 先頭の空白は行列の交差する部分を示す
