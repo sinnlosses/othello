@@ -1,7 +1,7 @@
 package othello.strategy;
 
 import othello.Coordinate;
-import othello.Field;
+import othello.Board;
 import othello.PieceType;
 
 import java.util.EnumMap;
@@ -12,11 +12,11 @@ import java.util.EnumMap;
  * オセロをするにあたって, プレイヤー同士行う場合や敵AIと行う場合などの
  * ゲームモードを管理する.
  */
-public class Strategy{
+public class StrategyMgrForEach {
     /**
      * それぞれのコマに対応する戦略を保持するマップ.
      */
-    private EnumMap<PieceType, StrategyInterface> strategyMgr;
+    private EnumMap<PieceType, StrategyInterface> strategyForPiece;
 
     /**
      * それぞれのコマに対応する戦略を初期化を行う.
@@ -24,20 +24,20 @@ public class Strategy{
      * @param othello 盤の情報を保持しているフィールド.
      * @param gameMode 本プログラムによって選ぶことができるゲームモードの選択肢.
      */
-    public Strategy(Field othello, GameMode gameMode) {
-        strategyMgr = new EnumMap<>(PieceType.class);
+    public StrategyMgrForEach(Board othello, GameMode gameMode) {
+        strategyForPiece = new EnumMap<>(PieceType.class);
         switch (gameMode) {
             case PLAYERS:
-                strategyMgr.put(PieceType.BLACK, new Player(othello));
-                strategyMgr.put(PieceType.WHITE, new Player(othello));
+                strategyForPiece.put(PieceType.BLACK, new Player(othello));
+                strategyForPiece.put(PieceType.WHITE, new Player(othello));
                 break;
             case WEAK_AI:
-                strategyMgr.put(PieceType.BLACK, new Player(othello));
-                strategyMgr.put(PieceType.WHITE, new WeakAI(othello));
+                strategyForPiece.put(PieceType.BLACK, new Player(othello));
+                strategyForPiece.put(PieceType.WHITE, new WeakAI(othello));
                 break;
             case AIS:
-                strategyMgr.put(PieceType.BLACK, new WeakAI(othello));
-                strategyMgr.put(PieceType.WHITE, new WeakAI(othello));
+                strategyForPiece.put(PieceType.BLACK, new WeakAI(othello));
+                strategyForPiece.put(PieceType.WHITE, new WeakAI(othello));
                 break;
         }
     }
@@ -49,6 +49,6 @@ public class Strategy{
      * @return コマを置く座標.
      */
     public Coordinate decideCoordinate(PieceType currentTurn) {
-        return strategyMgr.get(currentTurn).decideCoordinate();
+        return strategyForPiece.get(currentTurn).decideCoordinate();
     }
 }

@@ -1,7 +1,7 @@
 package othello.strategy;
 
 import othello.Coordinate;
-import othello.Field;
+import othello.Board;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,9 +11,9 @@ public class WeakAI implements StrategyInterface{
     private final int ROW = 8;
     private final int COL = 8;
 
-    private Field othello;
+    private Board othello;
 
-    public WeakAI(Field othello) {
+    public WeakAI(Board othello) {
         this.othello = othello;
     }
 

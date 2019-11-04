@@ -1,7 +1,7 @@
 package othello.strategy;
 
 import othello.Coordinate;
-import othello.Field;
+import othello.Board;
 
 import java.util.Scanner;
 
@@ -10,9 +10,9 @@ public class Player implements StrategyInterface{
     /**
      * コマの状況を保持しているフィールド
      */
-    private Field othello;
+    private Board othello;
 
-    public Player(Field othello) {
+    public Player(Board othello) {
         this.othello = othello;
     }
 
@@ -33,8 +33,8 @@ public class Player implements StrategyInterface{
             if (inputCoordinate.length != 2) {
                 continue;
             }
-            int inputRow = Field.toRowNumber(inputCoordinate[0]);
-            int inputCol = Field.toColNumber(inputCoordinate[1]);
+            int inputRow = Board.toRowNumber(inputCoordinate[0]);
+            int inputCol = Board.toColNumber(inputCoordinate[1]);
 
             // 入力が有効なら入力完了としてループを抜ける
             if (othello.canPutPiece(Coordinate.valueOf(inputRow, inputCol))) {

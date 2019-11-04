@@ -1,7 +1,7 @@
 package othello;
 
 import othello.strategy.GameMode;
-import othello.strategy.Strategy;
+import othello.strategy.StrategyMgrForEach;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,12 +12,12 @@ import java.util.Scanner;
  */
 public class Main {
     public static void main(String[] args) {
-        Field othello = new Field();
+        Board othello = new Board();
 
         // 初期表示
         othello.printField();
         GameMode gameMode = choiceGameMode();
-        Strategy strategy = new Strategy(othello, gameMode);
+        StrategyMgrForEach strategy = new StrategyMgrForEach(othello, gameMode);
 
         while (!othello.isGameOver()) {
             // 手番がコマを置けなければ手番を相手に移す
@@ -31,8 +31,7 @@ public class Main {
             Coordinate coordinate = strategy.decideCoordinate(othello.getCurrentTurn());
 
             // コマを置き, 挟んだコマをひっくり返す
-            othello.putPiece(coordinate);
-            othello.flipPiecesFromPlaced(coordinate);
+            othello.processToPlacePiece(coordinate);
 
             // コマを置いた結果を表示する
             othello.printField();

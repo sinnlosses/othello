@@ -1,7 +1,6 @@
 package othello;
 
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * オセロのフィールドを構築するクラス.
@@ -17,7 +16,7 @@ import java.util.Map;
  *
  * </p>
  */
-public class Field {
+public class Board {
     /**
      * フィールドの行を表す全アルファベット.
      */
@@ -70,6 +69,8 @@ public class Field {
      * フィールド本体.
      */
     private Piece[][] field;
+
+    private Deque<Piece[][]> fieldLogger;
     /**
      * 現在の手番.
      */
@@ -81,12 +82,14 @@ public class Field {
      * <p>
      * 初期化される項目は以下.
      * <ul>
+     *     <li>フィールドの盤面ログ</li>
      *     <li>フィールド. オセロにおける初期状態に設定される.</li>
      *     <li>プレイヤーの手番.</li>
      * </ul>
      * </p>
      */
-    public Field() {
+    public Board() {
+        fieldLogger = new ArrayDeque<>();
         field = new Piece[ROW][COL];
 
         for (int r = 0; r < ROW; r++) {
@@ -103,6 +106,31 @@ public class Field {
         currentTurn = PieceType.BLACK;
     }
 
+    public Board cloneInstance() {
+        Board newBoard = new Board();
+
+        for (int r = 0; r < ROW; r++) {
+            for (int c = 0; c < COL; c++) {
+                newBoard.field[r][c].setState(field[r][c].getState());
+            }
+        }
+
+        return newBoard;
+    }
+
+    public Piece[][] cloneField() {
+        Piece[][] newField = new Piece[ROW][COL];
+
+        for (int r = 0; r < ROW; r++) {
+            for (int c = 0; c < COL; c++) {
+                newField[r][c] = new Piece();
+                newField[r][c].setState(field[r][c].getState());
+            }
+        }
+
+        return newField;
+    }
+
     /**
      * 現在の手番を返す.
      *
@@ -110,13 +138,6 @@ public class Field {
      */
     public PieceType getCurrentTurn() {
         return currentTurn;
-    }
-
-    /**
-     * 手番を次に移す.
-     */
-    public void nextPlayer() {
-        currentTurn = Piece.getEnemyType(currentTurn);
     }
 
     /**
@@ -138,15 +159,6 @@ public class Field {
     }
 
     /**
-     * 現在の黒と白のコマの数をそれぞれ標準出力する.
-     */
-    public void printCurrentScores() {
-        Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
-        System.out.println(PieceType.BLACK + " : " + piecesCnt.get(PieceType.BLACK));
-        System.out.println(PieceType.WHITE + " : " + piecesCnt.get(PieceType.WHITE));
-    }
-
-    /**
      * 手番がコマを置くことができるかどうかを調べる.
      *
      * @return コマを置くことができる場合 {@code true}
@@ -160,6 +172,13 @@ public class Field {
             }
         }
         return false;
+    }
+
+    /**
+     * 手番を次に移す.
+     */
+    public void nextPlayer() {
+        currentTurn = Piece.getEnemyType(currentTurn);
     }
 
     /**
@@ -194,25 +213,10 @@ public class Field {
         return false;
     }
 
-    /**
-     * 指定したコマの座標から見て周囲8方向に対して自分のコマで挟んでいる相手のコマをひっくり返す.
-     *
-     * 前提として手番のコマを置いた後に使用すること.
-     * 空の状態の座標を指定してもエラーは排出しない.
-     * この場合でも周囲8方向の先に手番のコマがある場合
-     * 相手のコマをひっくり返す.
-     *
-     * @param coordinate ひっくり返す始点となるコマの座標
-     */
-    public void flipPiecesFromPlaced(final Coordinate coordinate) {
-        for (Vector vector : Vector.values()) {
-            // 自分のコマが調べる方向の先にあるか
-            if (!existOwnPieceAhead(coordinate, vector)) {
-                continue;
-            }
-            // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
-            flipBetweenOwnPieces(coordinate, vector);
-        }
+    public void processToPlacePiece(final Coordinate coordinate) {
+        placePiece(coordinate);
+        flipPiecesFromPlaced(coordinate);
+        logField();
     }
 
     /**
@@ -226,8 +230,42 @@ public class Field {
      *
      * @param coordinate コマを置く座標
      */
-    public void putPiece(final Coordinate coordinate) {
+    private void placePiece(final Coordinate coordinate) {
         field[coordinate.getRow()][coordinate.getCol()].setState(currentTurn);
+    }
+
+    /**
+     * 指定したコマの座標から見て周囲8方向に対して自分のコマで挟んでいる相手のコマをひっくり返す.
+     *
+     * 前提として手番のコマを置いた後に使用すること.
+     * 空の状態の座標を指定してもエラーは排出しない.
+     * この場合でも周囲8方向の先に手番のコマがある場合
+     * 相手のコマをひっくり返す.
+     *
+     * @param coordinate ひっくり返す始点となるコマの座標
+     */
+    private void flipPiecesFromPlaced(final Coordinate coordinate) {
+        for (Vector vector : Vector.values()) {
+            // 自分のコマが調べる方向の先にあるか
+            if (!existOwnPieceAhead(coordinate, vector)) {
+                continue;
+            }
+            // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
+            flipBetweenOwnPieces(coordinate, vector);
+        }
+    }
+
+    private void logField() {
+        fieldLogger.addFirst(cloneField());
+    }
+
+    public void goBack(int howMany) {
+        for (int i = 0; i < howMany; i++) {
+            if (fieldLogger.isEmpty()) {
+                return;
+            }
+            field = fieldLogger.removeFirst();
+        }
     }
 
     /**
@@ -235,6 +273,15 @@ public class Field {
      */
     public void printField() {
         System.out.println(toString());
+    }
+
+    /**
+     * 現在の黒と白のコマの数をそれぞれ標準出力する.
+     */
+    public void printCurrentScores() {
+        Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
+        System.out.println(PieceType.BLACK + " : " + piecesCnt.get(PieceType.BLACK));
+        System.out.println(PieceType.WHITE + " : " + piecesCnt.get(PieceType.WHITE));
     }
 
     /**
@@ -246,8 +293,9 @@ public class Field {
     public String toString() {
 
         final String lineSeparator = System.lineSeparator();
-        String[] rowAlphabets = ROW_ALPHABETS.split("");
-        String colNumbers = "  " + String.join(" ", COL_NUMBERS.split(""));
+        final String[] rowAlphabets = ROW_ALPHABETS.split("");
+        final String colNumbers = "  " + String.join(" ", COL_NUMBERS.split(""));
+
         StringBuilder sb = new StringBuilder();
 
         // 列番号の並び
@@ -255,6 +303,7 @@ public class Field {
         sb.append(colNumbers).append(lineSeparator);
 
         // 行番号と各フィールドの値が1行分の値
+        // 例: A ● ● ● ● ● ● ● ● A
         for (int r = 0; r < ROW; r++) {
             sb.append(rowAlphabets[r]).append(" ");
             for (int c = 0; c < COL; c++) {
@@ -276,38 +325,60 @@ public class Field {
      */
     private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
 
-        final int vectorRow = vector.getVectorRow();
-        final int vectorCol = vector.getVectorCol();
+        // 入力に対してとなりのコマであるかどうかを判定する変数.
+        boolean isNextToInput = true;
 
-        int movedRow = coordinate.getRow() + vectorRow;
-        int movedCol = coordinate.getCol() + vectorCol;
-
-        // 1つとなりの状態が外部なら指定方向に自分のコマはない
-        if (!isInsideField(Coordinate.valueOf(movedRow, movedCol))) {
-            return false;
-        }
-
-        // 1つとなりの状態が自分のコマなら相手のコマを挟んでいない
-        PieceType enemy = Piece.getEnemyType(currentTurn);
-        if (field[movedRow][movedCol].getState() != enemy ) {
-            return false;
-        }
-
-        // 次の座標に移動して相手のコマを挟んでいるか調べる
-        movedRow += vectorRow;
-        movedCol += vectorCol;
+        int movedRow = coordinate.getRow() + vector.getVectorRow();
+        int movedCol = coordinate.getCol() + vector.getVectorCol();
         while (isInsideField(Coordinate.valueOf(movedRow, movedCol))) {
-            if (field[movedRow][movedCol].getState() == currentTurn) {
-                return true;
+            PieceType target = field[movedRow][movedCol].getState();
+
+            if (isNextToInput) {
+                // となりのコマは相手のコマでなければならない.
+                if (target != Piece.getEnemyType(currentTurn)) {
+                    break;
+                }
+                isNextToInput = false;
+
+            } else {
+                if (target == PieceType.EMPTY) {
+                    break;
+                }
+                if (target == currentTurn) {
+                    return true;
+                }
             }
-            if (field[movedRow][movedCol].isEmpty()) {
-                break;
-            }
-            movedRow += vectorRow;
-            movedCol += vectorCol;
+
+            movedRow += vector.getVectorRow();
+            movedCol += vector.getVectorCol();
         }
 
         return false;
+    }
+
+    /**
+     * 座標と方向を指定して, 挟んでいる相手のコマをひっくり返す.
+     *
+     * <p>
+     * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている.
+     * そのためフィールドの外部に座標を指定するとエラーを排出する.
+     * </p>
+     *
+     * @param coordinate ひっくり返す始点となる座標
+     * @param vector ひっくり返す方向
+     */
+    private void flipBetweenOwnPieces(final Coordinate coordinate, final Vector vector) {
+        // 移動していく座標の変数
+        int movedRow = coordinate.getRow() + vector.getVectorRow();
+        int movedCol = coordinate.getCol() + vector.getVectorCol();
+
+        // 自分のコマにたどり着くまで相手のコマをひっくり返していく
+        while (field[movedRow][movedCol].getState() != currentTurn) {
+            field[movedRow][movedCol].flip();
+
+            movedRow += vector.getVectorRow();
+            movedCol += vector.getVectorCol();
+        }
     }
 
     /**
@@ -329,34 +400,6 @@ public class Field {
             }
         }
         return PiecesCnt;
-    }
-
-    /**
-     * 座標と方向を指定して, 挟んでいる相手のコマをひっくり返す.
-     *
-     * <p>
-     * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている.
-     * そのためフィールドの外部に座標を指定するとエラーを排出する.
-     * </p>
-     *
-     * @param coordinate ひっくり返す始点となる座標
-     * @param vector ひっくり返す方向
-     */
-    private void flipBetweenOwnPieces(final Coordinate coordinate, final Vector vector) {
-        final int vectorRow = vector.getVectorRow();
-        final int vectorCol = vector.getVectorCol();
-
-        // 移動していく座標の変数
-        int movedRow = coordinate.getRow() + vectorRow;
-        int movedCol = coordinate.getCol() + vectorCol;
-
-        // 自分のコマにたどり着くまで相手のコマをひっくり返していく
-        while (field[movedRow][movedCol].getState() != currentTurn) {
-            field[movedRow][movedCol].flip();
-
-            movedRow += vectorRow;
-            movedCol += vectorCol;
-        }
     }
 
     /**
