@@ -31,7 +31,7 @@ public class StrategyMgr {
                 strategyForPiece.put(PieceType.BLACK, new Player());
                 strategyForPiece.put(PieceType.WHITE, new Player());
                 break;
-            case WEAK_AI:
+            case AI:
                 strategyForPiece.put(PieceType.BLACK, new Player());
                 strategyForPiece.put(PieceType.WHITE, new WeakAI());
                 break;

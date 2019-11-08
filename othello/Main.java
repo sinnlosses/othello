@@ -3,9 +3,6 @@ package othello;
 import othello.strategy.GameMode;
 import othello.strategy.StrategyMgr;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -52,28 +49,21 @@ public class Main {
      * @return 入力に対応するゲームモード.
      */
     private static GameMode choiceGameMode() {
-        final String players = "1";
-        final String weakAI = "2";
-        final String AIs = "3";
-
-        Map<String, GameMode> gameModes = new HashMap<>();
-        gameModes.put(players, GameMode.PLAYERS);
-        gameModes.put(weakAI, GameMode.WEAK_AI);
-        gameModes.put(AIs, GameMode.AIS);
-
         while (true) {
             System.out.println("プレイするモードを選択してください");
-            System.out.println(String.format("%s: プレイヤー同士 %s: 対AI(弱) %s: 対AI(強)",
-                    players,
-                    weakAI,
-                    AIs));
-            System.out.println(String.format("例: %s", players));
+            System.out.println(String.format("%s: プレイヤー同士 %s: 対AI %s: AI同士(弱VS強)",
+                    GameMode.PLAYERS.getMode(),
+                    GameMode.AI.getMode(),
+                    GameMode.AIS.getMode()));
+            System.out.println(String.format("例: %s", GameMode.PLAYERS.getMode()));
 
             String mode = new Scanner(System.in).nextLine().trim();
 
             // 入力がゲームのモードに存在していれば処理を抜ける.
-            if (gameModes.containsKey(mode)) {
-                return gameModes.get(mode);
+            for (GameMode g : GameMode.values()) {
+                if (g.getMode().equals(mode)) {
+                    return g;
+                }
             }
             System.out.println("正しい選択肢を入力してください");
         }
