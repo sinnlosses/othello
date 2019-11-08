@@ -12,8 +12,8 @@ public class Player implements StrategyInterface{
      */
     private Board othello;
 
-    public Player(Board othello) {
-        this.othello = othello;
+    public Player() {
+        // 処理なし
     }
 
     /**
@@ -22,7 +22,7 @@ public class Player implements StrategyInterface{
      * @return プレイヤーが入力し、コマを置けることが保証された座標
      */
     @Override
-    public Coordinate decideCoordinate() {
+    public Coordinate decideCoordinate(Board othello) {
         while (true) {
             System.out.println("コマを置く座標の行と列を空白区切りで入力してください");
             System.out.println("行--->(a,b,c,...,h), 列--->(1,2,3,...,8)");

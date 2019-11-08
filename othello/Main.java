@@ -1,8 +1,9 @@
 package othello;
 
 import othello.strategy.GameMode;
-import othello.strategy.StrategyMgrForEach;
+import othello.strategy.StrategyMgr;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -16,8 +17,7 @@ public class Main {
 
         // 初期表示
         othello.printField();
-        GameMode gameMode = choiceGameMode();
-        StrategyMgrForEach strategy = new StrategyMgrForEach(othello, gameMode);
+        StrategyMgr strategy = new StrategyMgr(choiceGameMode());
 
         while (!othello.isGameOver()) {
             // 手番がコマを置けなければ手番を相手に移す
@@ -28,15 +28,13 @@ public class Main {
             System.out.println(othello.getCurrentTurn() + "の手番です");
 
             // コマを置く座標の入力処理を行う
-            Coordinate coordinate = strategy.decideCoordinate(othello.getCurrentTurn());
+            Coordinate coordinate = strategy.decideCoordinate(othello);
 
             // コマを置き, 挟んだコマをひっくり返す
             othello.processToPlacePiece(coordinate);
 
             // コマを置いた結果を表示する
-            othello.printField();
-            othello.printCurrentScores();
-            othello.nextPlayer();
+            othello.processAfterPlace(coordinate);
 
             try {
                 Thread.sleep(1000);
@@ -49,14 +47,14 @@ public class Main {
     }
 
     /**
-     * ゲームのモードを選択する.
+     * ゲームのモードを標準入力により選択する.
      *
-     * @return 入力に対応するゲームモードの列挙型.
+     * @return 入力に対応するゲームモード.
      */
     private static GameMode choiceGameMode() {
-        String players = "1";
-        String weakAI = "2";
-        String AIs = "3";
+        final String players = "1";
+        final String weakAI = "2";
+        final String AIs = "3";
 
         Map<String, GameMode> gameModes = new HashMap<>();
         gameModes.put(players, GameMode.PLAYERS);

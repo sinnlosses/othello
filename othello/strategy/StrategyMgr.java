@@ -12,7 +12,7 @@ import java.util.EnumMap;
  * オセロをするにあたって, プレイヤー同士行う場合や敵AIと行う場合などの
  * ゲームモードを管理する.
  */
-public class StrategyMgrForEach {
+public class StrategyMgr {
     /**
      * それぞれのコマに対応する戦略を保持するマップ.
      */
@@ -24,20 +24,20 @@ public class StrategyMgrForEach {
      * @param othello 盤の情報を保持しているフィールド.
      * @param gameMode 本プログラムによって選ぶことができるゲームモードの選択肢.
      */
-    public StrategyMgrForEach(Board othello, GameMode gameMode) {
+    public StrategyMgr(GameMode gameMode) {
         strategyForPiece = new EnumMap<>(PieceType.class);
         switch (gameMode) {
             case PLAYERS:
-                strategyForPiece.put(PieceType.BLACK, new Player(othello));
-                strategyForPiece.put(PieceType.WHITE, new Player(othello));
+                strategyForPiece.put(PieceType.BLACK, new Player());
+                strategyForPiece.put(PieceType.WHITE, new Player());
                 break;
             case WEAK_AI:
-                strategyForPiece.put(PieceType.BLACK, new Player(othello));
-                strategyForPiece.put(PieceType.WHITE, new WeakAI(othello));
+                strategyForPiece.put(PieceType.BLACK, new Player());
+                strategyForPiece.put(PieceType.WHITE, new WeakAI());
                 break;
             case AIS:
-                strategyForPiece.put(PieceType.BLACK, new WeakAI(othello));
-                strategyForPiece.put(PieceType.WHITE, new WeakAI(othello));
+                strategyForPiece.put(PieceType.BLACK, new WeakAI());
+                strategyForPiece.put(PieceType.WHITE, new StrongAI());
                 break;
         }
     }
@@ -48,7 +48,7 @@ public class StrategyMgrForEach {
      * @param currentTurn 手番.
      * @return コマを置く座標.
      */
-    public Coordinate decideCoordinate(PieceType currentTurn) {
-        return strategyForPiece.get(currentTurn).decideCoordinate();
+    public Coordinate decideCoordinate(Board othello) {
+        return strategyForPiece.get(othello.getCurrentTurn()).decideCoordinate(othello);
     }
 }

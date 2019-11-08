@@ -106,18 +106,26 @@ public class Board {
         currentTurn = PieceType.BLACK;
     }
 
+    /**
+     * 本インスタンスの複製を生成する.
+     *
+     * 複製時点のフィールドの状態と手番が保持される.
+     *
+     * @return 本インスタンスの複製
+     */
     public Board cloneInstance() {
         Board newBoard = new Board();
-
-        for (int r = 0; r < ROW; r++) {
-            for (int c = 0; c < COL; c++) {
-                newBoard.field[r][c].setState(field[r][c].getState());
-            }
-        }
+        newBoard.field = cloneField();
+        newBoard.currentTurn = getCurrentTurn();
 
         return newBoard;
     }
 
+    /**
+     * 本インスタンスのフィールドの状態を複製する.
+     *
+     * @return 現在のフィールドの状態の複製.
+     */
     public Piece[][] cloneField() {
         Piece[][] newField = new Piece[ROW][COL];
 
@@ -255,10 +263,18 @@ public class Board {
         }
     }
 
+    /**
+     * フィールドをスタックに保存する.
+     */
     private void logField() {
         fieldLogger.addFirst(cloneField());
     }
 
+    /**
+     * ログをさかのぼりフィールドの状態を戻す.
+     *
+     * @param howMany いくつ前の状態に戻すか.
+     */
     public void goBack(int howMany) {
         for (int i = 0; i < howMany; i++) {
             if (fieldLogger.isEmpty()) {
@@ -266,6 +282,37 @@ public class Board {
             }
             field = fieldLogger.removeFirst();
         }
+    }
+
+    /**
+     * 指定された座標の行と列の情報を表示する.
+     *
+     * @param coordinate 表示したい座標
+     */
+    public void printPlacedCoordinate(Coordinate coordinate) {
+        String row = ROW_ALPHABETS.split("")[coordinate.getRow()];
+        String col = COL_NUMBERS.split("")[coordinate.getCol()];
+        System.out.println(String.format("row = %s, col = %s", row, col));
+    }
+
+    /**
+     * コマを置いた後の処理を実行する.
+     *
+     * 具体的には
+     * <ol>
+     *     <li>フィールドの描画.</li>
+     *     <li>置かれたコマの座標の情報の表示.</li>
+     *     <li>現在のスコアの表示.</li>
+     *     <li>手番を相手に移す.</li>
+     * </ol>
+     *
+     * @param coordinate コマの情報を表示する座標.
+     */
+    public void processAfterPlace(Coordinate coordinate) {
+        printField();
+        printPlacedCoordinate(coordinate);
+        printCurrentScores();
+        nextPlayer();
     }
 
     /**
