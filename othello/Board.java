@@ -175,16 +175,15 @@ public class Board {
      * @return ゲームが終わった場合 {@code true}
      */
     public boolean isGameOver() {
-        Map<PieceType, Integer> PiecesCnt = getEachPiecesCnt();
-
-        // White, Empty, Black、どれか1つでも0なら勝負がついたと判定できる
-        // White, Blackが0なら片方がすべて取られたことを意味し、Emptyが0ならフィールドが埋まったことを意味する
-        for (int cnt : PiecesCnt.values()) {
-            if (cnt == 0) {
-                return true;
-            }
+        if (canPutForCurrentTurn()) {
+            return false;
         }
-        return false;
+        nextPlayer();
+        if (canPutForCurrentTurn()) {
+            nextPlayer();
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -233,15 +232,17 @@ public class Board {
         // 置いたコマから見て周囲8方向に挟むコマがあるかどうかを調べる
         for (Vector vector : Vector.values()) {
             // 自分のコマが調べる方向の先にあるか
-            if (!existOwnPieceAhead(coordinate, vector)) {
-                continue;
+            if (existOwnPieceAhead(coordinate, vector)) {
+                return true;
             }
-            // 挟むコマがある場合
-            return true;
         }
         return false;
     }
 
+    /**
+     * コマを置
+     * @param coordinate
+     */
     public void processToPlacePiece(final Coordinate coordinate) {
         placePiece(coordinate);
         flipPiecesFromPlaced(coordinate);
@@ -258,6 +259,7 @@ public class Board {
             if (fieldLogger.isEmpty()) {
                 return;
             }
+            currentTurn = Piece.getEnemyType(currentTurn);
             field = fieldLogger.removeFirst();
         }
     }
@@ -286,11 +288,10 @@ public class Board {
      *
      * @param coordinate コマの情報を表示する座標.
      */
-    public void processAfterBePlaced(Coordinate coordinate) {
+    public void processAfterPlacePiece(Coordinate coordinate) {
         printField();
         printPlacedCoordinate(coordinate);
         printCurrentScores();
-        nextPlayer();
     }
 
     /**

@@ -24,17 +24,19 @@ public class Main {
             }
             System.out.println(othello.getCurrentTurn() + "の手番です");
 
-            // コマを置く座標の入力処理を行う
+            // コマを置く座標の決定処理を行う
             Coordinate coordinate = strategy.decideCoordinate(othello);
 
             // コマを置き, 挟んだコマをひっくり返す
             othello.processToPlacePiece(coordinate);
 
             // コマを置いた結果を表示する
-            othello.processAfterBePlaced(coordinate);
+            othello.processAfterPlacePiece(coordinate);
+
+            othello.nextPlayer();
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

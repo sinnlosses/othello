@@ -29,11 +29,10 @@ public class WeakAI implements StrategyInterface{
      */
     @Override
     public Coordinate decideCoordinate(final Board othello) {
-        Board clone = othello.cloneInstance();
         List<Coordinate> candidates = new ArrayList<>();
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
-                if (clone.canPutPiece(Coordinate.valueOf(r, c))) {
+                if (othello.canPutPiece(Coordinate.valueOf(r, c))) {
                     candidates.add(Coordinate.valueOf(r, c));
                 }
             }

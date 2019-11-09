@@ -29,7 +29,8 @@ public final class Piece {
         }
     }
 
-    /**
+    /*
+    \
      * 空き状態を初期値とするコンストラクタ.
      */
     public Piece() {
