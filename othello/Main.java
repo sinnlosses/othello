@@ -31,7 +31,7 @@ public class Main {
             othello.processToPlacePiece(coordinate);
 
             // コマを置いた結果を表示する
-            othello.processAfterPlace(coordinate);
+            othello.processAfterBePlaced(coordinate);
 
             try {
                 Thread.sleep(1000);
@@ -51,9 +51,10 @@ public class Main {
     private static GameMode choiceGameMode() {
         while (true) {
             System.out.println("プレイするモードを選択してください");
-            System.out.println(String.format("%s: プレイヤー同士 %s: 対AI %s: AI同士(弱VS強)",
+            System.out.println(String.format("%s: プレイヤー同士 %s: 対AI(弱) %s: 対AI(強) %s: AI同士(弱VS強)",
                     GameMode.PLAYERS.getMode(),
-                    GameMode.AI.getMode(),
+                    GameMode.WEAK_AI.getMode(),
+                    GameMode.STRONG_AI.getMode(),
                     GameMode.AIS.getMode()));
             System.out.println(String.format("例: %s", GameMode.PLAYERS.getMode()));
 

@@ -149,6 +149,27 @@ public class Board {
     }
 
     /**
+     * 白、黒、空きの数を返す.
+     *
+     * @return 白、黒、空きのコマの数のマップ
+     */
+    public Map<PieceType, Integer> getEachPiecesCnt() {
+        Map<PieceType, Integer> PiecesCnt = new EnumMap<>(PieceType.class);
+        for (PieceType pieceType : PieceType.values()) {
+            PiecesCnt.put(pieceType, 0);
+        }
+
+        // 各フィールドの数をカウントする
+        for (int r = 0; r < ROW; r++) {
+            for (int c = 0; c < COL; c++) {
+                PieceType key = field[r][c].getState();
+                PiecesCnt.put(key, PiecesCnt.get(key) + 1);
+            }
+        }
+        return PiecesCnt;
+    }
+
+    /**
      * ゲームが終了したかどうかを判定する.
      *
      * @return ゲームが終わった場合 {@code true}
@@ -228,49 +249,6 @@ public class Board {
     }
 
     /**
-     * 指定した座標にコマを置く.
-     *
-     * <p>
-     * 前提として, 座標はフィールドの範囲内であること.
-     * また, すでにコマが置かれていたとしてもエラーとならず、
-     * 指定した座標のコマは現在の手番のコマの状態となる.
-     * </p>
-     *
-     * @param coordinate コマを置く座標
-     */
-    private void placePiece(final Coordinate coordinate) {
-        field[coordinate.getRow()][coordinate.getCol()].setState(currentTurn);
-    }
-
-    /**
-     * 指定したコマの座標から見て周囲8方向に対して自分のコマで挟んでいる相手のコマをひっくり返す.
-     *
-     * 前提として手番のコマを置いた後に使用すること.
-     * 空の状態の座標を指定してもエラーは排出しない.
-     * この場合でも周囲8方向の先に手番のコマがある場合
-     * 相手のコマをひっくり返す.
-     *
-     * @param coordinate ひっくり返す始点となるコマの座標
-     */
-    private void flipPiecesFromPlaced(final Coordinate coordinate) {
-        for (Vector vector : Vector.values()) {
-            // 自分のコマが調べる方向の先にあるか
-            if (!existOwnPieceAhead(coordinate, vector)) {
-                continue;
-            }
-            // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
-            flipBetweenOwnPieces(coordinate, vector);
-        }
-    }
-
-    /**
-     * フィールドをスタックに保存する.
-     */
-    private void logField() {
-        fieldLogger.addFirst(cloneField());
-    }
-
-    /**
      * ログをさかのぼりフィールドの状態を戻す.
      *
      * @param howMany いくつ前の状態に戻すか.
@@ -308,7 +286,7 @@ public class Board {
      *
      * @param coordinate コマの情報を表示する座標.
      */
-    public void processAfterPlace(Coordinate coordinate) {
+    public void processAfterBePlaced(Coordinate coordinate) {
         printField();
         printPlacedCoordinate(coordinate);
         printCurrentScores();
@@ -404,6 +382,42 @@ public class Board {
     }
 
     /**
+     * 指定した座標にコマを置く.
+     *
+     * <p>
+     * 前提として, 座標はフィールドの範囲内であること.
+     * また, すでにコマが置かれていたとしてもエラーとならず、
+     * 指定した座標のコマは現在の手番のコマの状態となる.
+     * </p>
+     *
+     * @param coordinate コマを置く座標
+     */
+    private void placePiece(final Coordinate coordinate) {
+        field[coordinate.getRow()][coordinate.getCol()].setState(currentTurn);
+    }
+
+    /**
+     * 指定したコマの座標から見て周囲8方向に対して自分のコマで挟んでいる相手のコマをひっくり返す.
+     *
+     * 前提として手番のコマを置いた後に使用すること.
+     * 空の状態の座標を指定してもエラーは排出しない.
+     * この場合でも周囲8方向の先に手番のコマがある場合
+     * 相手のコマをひっくり返す.
+     *
+     * @param coordinate ひっくり返す始点となるコマの座標
+     */
+    private void flipPiecesFromPlaced(final Coordinate coordinate) {
+        for (Vector vector : Vector.values()) {
+            // 自分のコマが調べる方向の先にあるか
+            if (!existOwnPieceAhead(coordinate, vector)) {
+                continue;
+            }
+            // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
+            flipBetweenOwnPieces(coordinate, vector);
+        }
+    }
+
+    /**
      * 座標と方向を指定して, 挟んでいる相手のコマをひっくり返す.
      *
      * <p>
@@ -429,24 +443,10 @@ public class Board {
     }
 
     /**
-     * 白、黒、空きの数を返す.
-     *
-     * @return 白、黒、空きのコマの数のマップ
+     * 現在のフィールドをスタックに保存する.
      */
-    private Map<PieceType, Integer> getEachPiecesCnt() {
-        Map<PieceType, Integer> PiecesCnt = new EnumMap<>(PieceType.class);
-        for (PieceType pieceType : PieceType.values()) {
-            PiecesCnt.put(pieceType, 0);
-        }
-
-        // 各フィールドの数をカウントする
-        for (int r = 0; r < ROW; r++) {
-            for (int c = 0; c < COL; c++) {
-                PieceType key = field[r][c].getState();
-                PiecesCnt.put(key, PiecesCnt.get(key) + 1);
-            }
-        }
-        return PiecesCnt;
+    private void logField() {
+        fieldLogger.addFirst(cloneField());
     }
 
     /**

@@ -2,8 +2,9 @@ package othello.strategy;
 
 public enum GameMode {
     PLAYERS("1"),
-    AI("2"),
-    AIS("3");
+    WEAK_AI("2"),
+    STRONG_AI("3"),
+    AIS("4");
 
     private String mode;
 

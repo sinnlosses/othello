@@ -6,8 +6,9 @@ import othello.Piece;
 import othello.PieceType;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import static java.lang.Math.max;
 
@@ -23,6 +24,18 @@ public class StrongAI implements StrategyInterface{
      * フィールドの列数.
      */
     private final int COL = 8;
+    /**
+     * 盤面評価に使用される盤位置の評価値
+     */
+    private final int[][] BP = {{45, -11, 4, -1, -1, 4, -11, 45},
+                                {-11, -16, -1, -3, -3, 2, -16, -11},
+                                {4, -1, 2, -1, -1, 2, -1, 4},
+                                {-1, -3, -1, 0, 0, -1, -3, -1},
+                                {-1, -3, -1, 0, 0, -1, -3, -1},
+                                {4, -1, 2, -1, -1, 2, -1, 4},
+                                {-11, -16, -1, -3, -3, 2, -16, -11},
+                                {45, -11, 4, -1, -1, 4, -11, 45}
+    };
 
     public StrongAI() {
         // 処理なし
@@ -38,7 +51,7 @@ public class StrongAI implements StrategyInterface{
     public Coordinate decideCoordinate(Board othello) {
         Board clone = othello.cloneInstance();
         Coordinate result = Coordinate.valueOf(-1, -1);
-        List<Coordinate> candidates = extractPossibleChoice(clone);
+        List<Coordinate> candidates = extractCandidates(clone);
 
         // 評価値の初期値を最小の値として設定する.
         int evalMax = Integer.MIN_VALUE;
@@ -46,10 +59,11 @@ public class StrongAI implements StrategyInterface{
         // 置くことができる座標それぞれの評価値を求め最も評価値の高い座標を選出する.
         for (Coordinate candidate : candidates) {
             clone.processToPlacePiece(candidate);
-            int eval = alphabeta(clone, 6, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            int eval = alphaBeta(clone, 6, Integer.MIN_VALUE, Integer.MAX_VALUE);
             clone.goBack(1);
             if (eval > evalMax) {
                 result = candidate;
+                evalMax = eval;
             }
         }
         return result;
@@ -64,15 +78,15 @@ public class StrongAI implements StrategyInterface{
      * @param beta 関心の最大値.
      * @return 評価値
      */
-    private int alphabeta(Board othello, final int depth, int alpha, int beta) {
-        List<Coordinate> candidates = extractPossibleChoice(othello);
+    private int alphaBeta(Board othello, final int depth, int alpha, int beta) {
+        List<Coordinate> candidates = extractCandidates(othello);
         if (depth <= 0 || candidates.isEmpty()) {
             return evaluate(othello);
         }
 
         for (Coordinate candidate : candidates) {
             othello.processToPlacePiece(candidate);
-            alpha = max(alpha, -alphabeta(othello,depth-1, -beta, -alpha));
+            alpha = max(alpha, -alphaBeta(othello,depth-1, -beta, -alpha));
             othello.goBack(1);
             if (alpha >= beta) {
                 break;
@@ -85,38 +99,18 @@ public class StrongAI implements StrategyInterface{
      * オセロの盤面を評価する.
      *
      * @param othello 評価対象の盤面の情報を保持するオブジェクト.
-     * @return 盤面の評価値
+     * @return 盤面の評価値.
      */
     private int evaluate(Board othello) {
         Piece[][] field = othello.cloneField();
-        EnumMap<PieceType, Integer> bePutCnt = new EnumMap<>(PieceType.class);
-        for (PieceType p : PieceType.values()) {
-            bePutCnt.put(p, 0);
-        }
-        for (int r = 0; r < ROW; r++) {
-            for (int c = 0; c < COL; c++) {
-                int cnt = bePutCnt.get(field[r][c].getState());
-                bePutCnt.put(field[r][c].getState(), cnt + 1);
-            }
-        }
 
-        PieceType enemy = Piece.getEnemyType(othello.getCurrentTurn());
-        int scoreA = bePutCnt.get(othello.getCurrentTurn()) - bePutCnt.get(enemy);
-        int scoreB = 0;
-        if (field[0][0].getState() == othello.getCurrentTurn()) {
-            scoreB += 10;
-        }
-        if (field[7][0].getState() == othello.getCurrentTurn()) {
-            scoreB += 10;
-        }
-        if (field[0][7].getState() == othello.getCurrentTurn()) {
-            scoreB += 10;
-        }
-        if (field[7][7].getState() == othello.getCurrentTurn()) {
-            scoreB += 10;
-        }
+        // 盤位置(BP)の評価値を計算する.
+        int scoreBP = calcBoardPosition(field, othello.getCurrentTurn());
 
-        return scoreA + 3 * scoreB;
+        // 候補数(CN)の評価値を計算する.
+        int scoreCN = (extractCandidates(othello).size() + new Random().nextInt(2)*2);
+
+        return scoreBP*3 + scoreCN*10;
     }
 
     /**
@@ -125,7 +119,7 @@ public class StrongAI implements StrategyInterface{
      * @param othello フィールドの盤面を保持するオブジェクト.
      * @return すべての可能な手.
      */
-    private List<Coordinate> extractPossibleChoice(Board othello) {
+    private List<Coordinate> extractCandidates(Board othello) {
         List<Coordinate> coordinates = new ArrayList<>();
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
@@ -135,5 +129,41 @@ public class StrongAI implements StrategyInterface{
             }
         }
         return coordinates;
+    }
+
+    /**
+     * 盤面を盤位置に基づいて全体評価する.
+     *
+     * 評価値を計算するために使用される.
+     *
+     * @param field 盤面
+     * @param me 自分のコマの種類
+     * @return 評価値
+     */
+    private int calcBoardPosition(Piece[][] field, PieceType me) {
+        int scoreBP = 0;
+        for (int r = 0; r < ROW; r++) {
+            for (int c = 0; c < COL; c++) {
+                scoreBP += BP[r][c]*toIntForPiece(field[r][c], me);
+            }
+        }
+        return scoreBP;
+    }
+
+    /**
+     * コマの状態を判定しコマ単位の評価値を計算する.
+     *
+     * @param target 対象のコマ
+     * @param me 自分のコマの種類
+     * @return 評価値
+     */
+    private int toIntForPiece(Piece target, PieceType me) {
+        if (target.getState() == me) {
+            return 1;
+        } else if (target.isEmpty()) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 }
