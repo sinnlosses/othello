@@ -19,21 +19,22 @@ public class Main {
         while (!othello.isGameOver()) {
             // 手番がコマを置けなければ手番を相手に移す
             if (!othello.canPutForCurrentTurn()) {
-                othello.nextPlayer();
-                continue;
+                othello.nextTurn();
             }
-            System.out.println(othello.getCurrentTurn() + "の手番です");
+            
+            // 手番の情報を表示する.
+            othello.printCurrentTurn();
 
-            // コマを置く座標の決定処理を行う
+            // コマを置く座標の決定処理を行う.
             Coordinate coordinate = strategy.decideCoordinate(othello);
 
-            // コマを置き, 挟んだコマをひっくり返す
+            // コマを置き, 挟んだコマをひっくり返す.
             othello.processToPlacePiece(coordinate);
 
-            // コマを置いた結果を表示する
-            othello.processAfterPlacePiece(coordinate);
+            // コマを置いた結果を表示する.
+            othello.printResult(coordinate);
 
-            othello.nextPlayer();
+            othello.nextTurn();
 
             try {
                 Thread.sleep(500);

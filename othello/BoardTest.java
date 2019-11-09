@@ -101,7 +101,7 @@ class BoardTest {
     void nextPlayer() {
         PieceType initState = othello.getCurrentTurn();
         assertEquals(PieceType.BLACK, initState);
-        othello.nextPlayer();
+        othello.nextTurn();
         PieceType changedState = othello.getCurrentTurn();
         assertEquals(PieceType.WHITE, changedState);
     }

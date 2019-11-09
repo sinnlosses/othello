@@ -89,7 +89,7 @@ public class StrongAI implements StrategyInterface{
 
         for (Coordinate candidate : candidates) {
             othello.processToPlacePiece(candidate);
-            othello.nextPlayer();
+            othello.nextTurn();
 
             // 子ノードの評価値を計算する.
             int childValue = alphaBeta(othello, depth-1, alpha, beta);

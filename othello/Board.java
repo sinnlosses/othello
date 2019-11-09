@@ -178,9 +178,9 @@ public class Board {
         if (canPutForCurrentTurn()) {
             return false;
         }
-        nextPlayer();
+        nextTurn();
         if (canPutForCurrentTurn()) {
-            nextPlayer();
+            nextTurn();
             return false;
         }
         return true;
@@ -205,7 +205,7 @@ public class Board {
     /**
      * 手番を次に移す.
      */
-    public void nextPlayer() {
+    public void nextTurn() {
         currentTurn = Piece.getEnemyType(currentTurn);
     }
 
@@ -239,9 +239,20 @@ public class Board {
         return false;
     }
 
+    public void printCurrentTurn() {
+        System.out.println(getCurrentTurn() + "の手番です");
+    }
+
     /**
-     * コマを置
-     * @param coordinate
+     * コマを置く場合に必要な処理をまとめて行う.
+     * 具体的には
+     * <ol>
+     *     <li>コマを指定の座標に置く</li>
+     *     <li>挟んだコマをひっくり返す</li>
+     *     <li>フィールドのログを取る</li>
+     * </ol>
+     *
+     * @param coordinate 置く座標
      */
     public void processToPlacePiece(final Coordinate coordinate) {
         placePiece(coordinate);
@@ -250,18 +261,21 @@ public class Board {
     }
 
     /**
-     * ログをさかのぼりフィールドの状態を戻す.
+     * コマを置いた結果を表示する.
      *
-     * @param howMany いくつ前の状態に戻すか.
+     * 具体的には
+     * <ol>
+     *     <li>フィールドの描画.</li>
+     *     <li>置かれたコマの座標の情報の表示.</li>
+     *     <li>現在のスコアの表示.</li>
+     * </ol>
+     *
+     * @param coordinate コマの情報を表示する座標.
      */
-    public void goBack(int howMany) {
-        for (int i = 0; i < howMany; i++) {
-            if (fieldLogger.isEmpty()) {
-                return;
-            }
-            currentTurn = Piece.getEnemyType(currentTurn);
-            field = fieldLogger.removeFirst();
-        }
+    public void printResult(Coordinate coordinate) {
+        printField();
+        printPlacedCoordinate(coordinate);
+        printCurrentScores();
     }
 
     /**
@@ -270,28 +284,9 @@ public class Board {
      * @param coordinate 表示したい座標
      */
     public void printPlacedCoordinate(Coordinate coordinate) {
-        String row = ROW_ALPHABETS.split("")[coordinate.getRow()];
-        String col = COL_NUMBERS.split("")[coordinate.getCol()];
+        final String row = ROW_ALPHABETS.split("")[coordinate.getRow()];
+        final String col = COL_NUMBERS.split("")[coordinate.getCol()];
         System.out.println(String.format("row = %s, col = %s", row, col));
-    }
-
-    /**
-     * コマを置いた後の処理を実行する.
-     *
-     * 具体的には
-     * <ol>
-     *     <li>フィールドの描画.</li>
-     *     <li>置かれたコマの座標の情報の表示.</li>
-     *     <li>現在のスコアの表示.</li>
-     *     <li>手番を相手に移す.</li>
-     * </ol>
-     *
-     * @param coordinate コマの情報を表示する座標.
-     */
-    public void processAfterPlacePiece(Coordinate coordinate) {
-        printField();
-        printPlacedCoordinate(coordinate);
-        printCurrentScores();
     }
 
     /**
@@ -308,6 +303,21 @@ public class Board {
         Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
         System.out.println(PieceType.BLACK + " : " + piecesCnt.get(PieceType.BLACK));
         System.out.println(PieceType.WHITE + " : " + piecesCnt.get(PieceType.WHITE));
+    }
+
+    /**
+     * ログをさかのぼりフィールドの状態を戻す.
+     *
+     * @param howMany いくつ前の状態に戻すか.
+     */
+    public void goBack(int howMany) {
+        for (int i = 0; i < howMany; i++) {
+            if (fieldLogger.isEmpty()) {
+                return;
+            }
+            currentTurn = Piece.getEnemyType(currentTurn);
+            field = fieldLogger.removeFirst();
+        }
     }
 
     /**
