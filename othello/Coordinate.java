@@ -57,6 +57,19 @@ public final class Coordinate {
     }
 
     /**
+     * 座標を指定されたベクトルへ移動する.
+     *
+     * @param moveTo 移動方向.
+     * @return 移動後の座標.
+     */
+    public Coordinate move(Vector moveTo) {
+        int movedRow = getRow() + moveTo.getVectorRow();
+        int movedCol = getCol() + moveTo.getVectorCol();
+
+        return Coordinate.valueOf(movedRow, movedCol);
+    }
+
+    /**
      * 行番号を取得する.
      *
      * @return 行番号

@@ -225,7 +225,7 @@ public class Board {
             return false;
         }
         // すでにコマが置かれていた場合
-        if (!field[coordinate.getRow()][coordinate.getCol()].isEmpty()) {
+        if (!getFieldPieceAt(coordinate).isEmpty()) {
             return false;
         }
 
@@ -363,33 +363,30 @@ public class Board {
      * @return 自分のコマがあるかどうか
      */
     private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
+        // 調べる対象の座標. 入力の座標から指定した方向へ移動させる.
+        Coordinate target = coordinate.move(vector);
 
-        // 入力に対してとなりのコマであるかどうかを判定する変数.
-        boolean isNextToInput = true;
+        if (!isInsideField(target)) {
+            return false;
+        }
+        if (getFieldPieceAt(target).getState() != Piece.getEnemyType(currentTurn)) {
+            // となりのコマは相手のコマでなければならない.
+            return false;
+        }
 
-        int movedRow = coordinate.getRow() + vector.getVectorRow();
-        int movedCol = coordinate.getCol() + vector.getVectorCol();
-        while (isInsideField(Coordinate.valueOf(movedRow, movedCol))) {
-            PieceType target = field[movedRow][movedCol].getState();
+        target = target.move(vector);
 
-            if (isNextToInput) {
-                // となりのコマは相手のコマでなければならない.
-                if (target != Piece.getEnemyType(currentTurn)) {
-                    break;
-                }
-                isNextToInput = false;
-
-            } else {
-                if (target == PieceType.EMPTY) {
-                    break;
-                }
-                if (target == currentTurn) {
-                    return true;
-                }
+        while (isInsideField(target)) {
+            // 2つとなり以降の場合、コマが途切れている場合は相手のコマを挟んでいない.
+            // 自分のコマである場合相手のコマを挟んでいる.
+            if (getFieldPieceAt(target).getState() == PieceType.EMPTY) {
+                return false;
+            }
+            if (getFieldPieceAt(target).getState() == currentTurn) {
+                return true;
             }
 
-            movedRow += vector.getVectorRow();
-            movedCol += vector.getVectorCol();
+            target = target.move(vector);
         }
 
         return false;
@@ -407,7 +404,7 @@ public class Board {
      * @param coordinate コマを置く座標
      */
     private void placePiece(final Coordinate coordinate) {
-        field[coordinate.getRow()][coordinate.getCol()].setState(currentTurn);
+        getFieldPieceAt(coordinate).setState(currentTurn);
     }
 
     /**
@@ -442,15 +439,12 @@ public class Board {
      */
     private void flipBetweenOwnPieces(final Coordinate coordinate, final Vector vector) {
         // 移動していく座標の変数
-        int movedRow = coordinate.getRow() + vector.getVectorRow();
-        int movedCol = coordinate.getCol() + vector.getVectorCol();
+        Coordinate target = coordinate.move(vector);
 
         // 自分のコマにたどり着くまで相手のコマをひっくり返していく
-        while (field[movedRow][movedCol].getState() != currentTurn) {
-            field[movedRow][movedCol].flip();
-
-            movedRow += vector.getVectorRow();
-            movedCol += vector.getVectorCol();
+        while (getFieldPieceAt(target).getState() != currentTurn) {
+            getFieldPieceAt(target).flip();
+            target = target.move(vector);
         }
     }
 
@@ -459,6 +453,16 @@ public class Board {
      */
     private void logField() {
         fieldLogger.addFirst(cloneField());
+    }
+
+    /**
+     * 指定した座標におけるフィールドのコマを取得する.
+     *
+     * @param coordinate コマの状態を取得する対象の座標.
+     * @return コマの状態を保持するオブジェクト.
+     */
+    private Piece getFieldPieceAt(Coordinate coordinate) {
+        return field[coordinate.getRow()][coordinate.getCol()];
     }
 
     /**

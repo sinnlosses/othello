@@ -12,6 +12,8 @@ public class Main {
     public static void main(String[] args) {
         Board othello = new Board();
 
+        System.out.println("ゲーム開始");
+
         // 初期表示
         othello.printField();
         StrategyMgr strategy = new StrategyMgr(choiceGameMode());
