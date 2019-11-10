@@ -250,9 +250,9 @@ public class Board {
      *
      * @param coordinate 置く座標
      */
-    public void processToPlacePiece(final Coordinate coordinate) {
-        placePiece(coordinate);
-        flipPiecesFromPlaced(coordinate);
+    public void processToPutPiece(final Coordinate coordinate) {
+        putPiece(coordinate);
+        flipPiecesFrom(coordinate);
         logField();
     }
 
@@ -270,7 +270,7 @@ public class Board {
      */
     public void printResult(Coordinate coordinate) {
         printField();
-        printPlacedCoordinate(coordinate);
+        printPutCoordinate(coordinate);
         printCurrentScores();
     }
 
@@ -279,7 +279,7 @@ public class Board {
      *
      * @param coordinate 表示したい座標
      */
-    public void printPlacedCoordinate(Coordinate coordinate) {
+    public void printPutCoordinate(Coordinate coordinate) {
         final String row = ROW_ALPHABETS.split("")[coordinate.getRow()];
         final String col = COL_NUMBERS.split("")[coordinate.getCol()];
         System.out.println(String.format("row = %s, col = %s", row, col));
@@ -403,7 +403,7 @@ public class Board {
      *
      * @param coordinate コマを置く座標
      */
-    private void placePiece(final Coordinate coordinate) {
+    private void putPiece(final Coordinate coordinate) {
         getFieldPieceAt(coordinate).setState(currentTurn);
     }
 
@@ -417,7 +417,7 @@ public class Board {
      *
      * @param coordinate ひっくり返す始点となるコマの座標
      */
-    private void flipPiecesFromPlaced(final Coordinate coordinate) {
+    private void flipPiecesFrom(final Coordinate coordinate) {
         for (Vector vector : Vector.values()) {
             if (existOwnPieceAhead(coordinate, vector)) {
                 // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す

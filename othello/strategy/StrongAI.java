@@ -59,7 +59,7 @@ public class StrongAI implements StrategyInterface{
 
         // 置くことができる座標それぞれの評価値を求め最も評価値の高い座標を選出する.
         for (Coordinate candidate : candidates) {
-            clone.processToPlacePiece(candidate);
+            clone.processToPutPiece(candidate);
             int eval = alphaBeta(clone, 5, Integer.MIN_VALUE, Integer.MAX_VALUE);
             clone.goBack(1);
             if (eval > evalMax) {
@@ -89,7 +89,7 @@ public class StrongAI implements StrategyInterface{
         int lowerBound = Integer.MIN_VALUE;
 
         for (Coordinate candidate : candidates) {
-            othello.processToPlacePiece(candidate);
+            othello.processToPutPiece(candidate);
             othello.nextTurn();
 
             // 子ノードの評価値を計算する.

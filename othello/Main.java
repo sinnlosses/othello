@@ -31,7 +31,7 @@ public class Main {
             Coordinate coordinate = strategy.decideCoordinate(othello);
 
             // コマを置き, 挟んだコマをひっくり返す.
-            othello.processToPlacePiece(coordinate);
+            othello.processToPutPiece(coordinate);
 
             // コマを置いた結果を表示する.
             othello.printResult(coordinate);
