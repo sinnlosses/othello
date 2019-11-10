@@ -5,7 +5,6 @@ import java.util.*;
 /**
  * オセロのフィールドを構築するクラス.
  *
- * <p>
  * 役割.
  * <ul>
  * <li>現在のプレイヤーの管理</li>
@@ -14,7 +13,6 @@ import java.util.*;
  * <li>スコア管理</li>
  * </ul>
  *
- * </p>
  */
 public class Board {
     /**
@@ -28,9 +26,7 @@ public class Board {
     /**
      * アルファベットを対応する行番号に変換する.
      *
-     * <p>
      * <pre>a → 0, b → 1 ... h → 7</pre>
-     * </p>
      *
      * @param alphabetRow 変換するアルファベット
      * @return 対応する行番号(対応する行番号がない場合-1)
@@ -44,9 +40,7 @@ public class Board {
     /**
      * 番号を対応する列番号に変換する.
      *
-     * <p>
      * <pre> 1 → 0, 2 → 1, ..., 8 → 7</pre>
-     * </p>
      *
      * @param col 変換対象の番号
      * @return 対応する列番号(対応する列番号が存在しない場合-1)
@@ -79,14 +73,12 @@ public class Board {
     /**
      * オセロのフィールドを生成する.
      *
-     * <p>
      * 初期化される項目は以下.
      * <ul>
      *     <li>フィールドの盤面ログ</li>
      *     <li>フィールド. オセロにおける初期状態に設定される.</li>
      *     <li>プレイヤーの手番.</li>
      * </ul>
-     * </p>
      */
     public Board() {
         fieldLogger = new ArrayDeque<>();

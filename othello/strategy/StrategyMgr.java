@@ -21,7 +21,6 @@ public class StrategyMgr {
     /**
      * それぞれのコマに対応する戦略を初期化を行う.
      *
-     * @param othello 盤の情報を保持しているフィールド.
      * @param gameMode 本プログラムによって選ぶことができるゲームモードの選択肢.
      */
     public StrategyMgr(GameMode gameMode) {
@@ -49,7 +48,7 @@ public class StrategyMgr {
     /**
      * 戦略に基づきコマを置く座標を決定する.
      *
-     * @param currentTurn 手番.
+     * @param othello 盤面の状態を保持するオブジェクト.
      * @return コマを置く座標.
      */
     public Coordinate decideCoordinate(Board othello) {

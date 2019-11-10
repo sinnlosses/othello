@@ -109,8 +109,8 @@ class BoardTest {
     /**
      * 初期値の時点ではゲームオーバーではない
      * コマが片方無くなったか、コマが白黒で埋まったかでゲームオーバー.
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException フィールド名がない場合.
+     * @throws IllegalAccessException アクセス権がない場合.
      */
     @org.junit.jupiter.api.Test
     void isGameOver() throws NoSuchFieldException, IllegalAccessException {

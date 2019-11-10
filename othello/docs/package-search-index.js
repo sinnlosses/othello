@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"othello","h":"","u":""},{"l":"othello.strategy","h":"","u":""}]
