@@ -121,6 +121,7 @@ public final class Coordinate implements Comparable<Coordinate>{
     }
 
     /**
+     * オブジェクト同士を比較する.
      *
      * @param o 比較対象.
      * @return 自身が比較対象と比べて大きければ1, 等しければ0, 小さければ-1.
