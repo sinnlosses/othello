@@ -21,7 +21,7 @@ public class Main {
             if (!othello.canPutForCurrentTurn()) {
                 othello.nextTurn();
             }
-            
+
             // 手番の情報を表示する.
             othello.printCurrentTurn();
 

@@ -239,10 +239,6 @@ public class Board {
         return false;
     }
 
-    public void printCurrentTurn() {
-        System.out.println(getCurrentTurn() + "の手番です");
-    }
-
     /**
      * コマを置く場合に必要な処理をまとめて行う.
      * 具体的には
@@ -303,6 +299,13 @@ public class Board {
         Map<PieceType, Integer> piecesCnt = getEachPiecesCnt();
         System.out.println(PieceType.BLACK + " : " + piecesCnt.get(PieceType.BLACK));
         System.out.println(PieceType.WHITE + " : " + piecesCnt.get(PieceType.WHITE));
+    }
+
+    /**
+     * 手番の情報を表示する.
+     */
+    public void printCurrentTurn() {
+        System.out.println(getCurrentTurn() + "の手番です");
     }
 
     /**
@@ -419,12 +422,10 @@ public class Board {
      */
     private void flipPiecesFromPlaced(final Coordinate coordinate) {
         for (Vector vector : Vector.values()) {
-            // 自分のコマが調べる方向の先にあるか
-            if (!existOwnPieceAhead(coordinate, vector)) {
-                continue;
+            if (existOwnPieceAhead(coordinate, vector)) {
+                // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
+                flipBetweenOwnPieces(coordinate, vector);
             }
-            // 挟むコマがあると判定された方向に向かって相手のコマをひっくり返す
-            flipBetweenOwnPieces(coordinate, vector);
         }
     }
 
