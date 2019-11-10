@@ -1,6 +1,7 @@
 package othello;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
  * 一度座標を設定すると取得はできるが再設定はできない.
  * インスタンスの生成にはファクトリメソッドを通して行う.
  */
-public final class Coordinate {
+public final class Coordinate implements Comparable<Coordinate>{
     /**
      * 生成された座標を保持するリスト.
      */
@@ -35,14 +36,46 @@ public final class Coordinate {
      * @return インスタンス
      */
     synchronized public static Coordinate valueOf(final int row, final int col) {
-        for (Coordinate c : coordinates) {
-            if (c.getRow() == row && c.getCol() == col) {
-                return c;
-            }
+        int index = binarySearch(row, col);
+        if (index >= 0) {
+            return coordinates.get(index);
         }
+
         Coordinate newCoordinate = new Coordinate(row, col);
         coordinates.add(newCoordinate);
+        Collections.sort(coordinates);
         return newCoordinate;
+    }
+
+    /**
+     * 指定した行番号と列番号を持つ座標を二分探索する.
+     *
+     * @param row 探索する行番号.
+     * @param col 探索する列番号.
+     * @return 見つかった場合そのインデックス, そうでない場合は-1.
+     */
+    private static int binarySearch(final int row, final int col) {
+        int low = 0;
+        int high = coordinates.size()-1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            Coordinate target = coordinates.get(mid);
+            if (target.getRow() < row) {
+                low = mid + 1;
+            } else if (target.getRow() > row) {
+                high = mid - 1;
+            } else {
+                if (target.getCol() < col) {
+                    low = mid + 1;
+                } else if (target.getCol() > col) {
+                    high = mid -1;
+                } else {
+                    return mid;
+                }
+            }
+        }
+        return -1;
     }
 
     /**
@@ -85,6 +118,22 @@ public final class Coordinate {
      */
     public int getCol() {
         return col;
+    }
+
+    /**
+     *
+     * @param o 比較対象.
+     * @return 自身が比較対象と比べて大きければ1, 等しければ0, 小さければ-1.
+     */
+    @Override
+    public int compareTo(Coordinate o) {
+        if (o.getRow() < row) {
+            return 1;
+        } else if (o.getRow() == row) {
+            return Integer.compare(col, o.getCol());
+        } else {
+            return -1;
+        }
     }
 
     /**
