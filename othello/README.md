@@ -32,6 +32,7 @@
 - GameMode.java: 遊ぶことができるゲームのモードを管理する列挙型クラス
 - Player.java: AIでなく、実際のプレイヤーの場合に入力を求める戦略パターンの1つ
 - WeakAI.java: ランダムにコマを置くAI.
-- StrongAi.java: アルファベータ法によりコマを置くAI.
+- NormalAI.java: アルファベータ法によりコマを置くAI.
+- StrongAI.java: NormalAIの評価値を改定したAI.
 - Strategy.java: 2種類のコマそれぞれに対する戦略を保持するクラス.
 - StrategyInterface.java: 戦略クラスのポリフォーリズムを可能にするインターフェース.
