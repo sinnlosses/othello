@@ -7,6 +7,7 @@ import othello.PieceType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * アルファベータ法による評価値の計算用クラス.
@@ -23,7 +24,7 @@ public class StrongAI implements StrategyInterface{
     /**
      * 盤面評価に使用される盤位置の評価値
      */
-    private final int[][] BoardPosition = {{45, -11, 4, -1, -1, 4, -11, 45},
+    private final int[][] PositionScore = {{45, -11, 4, -1, -1, 4, -11, 45},
                                             {-11, -16, -1, -3, -3, 2, -16, -11},
                                             {4, -1, 2, -1, -1, 2, -1, 4},
                                             {-1, -3, -1, 0, 0, -1, -3, -1},
@@ -51,7 +52,7 @@ public class StrongAI implements StrategyInterface{
     public Coordinate decideCoordinate(Board othello) {
         Board clone = othello.cloneInstance();
         Coordinate result = Coordinate.valueOf(-1, -1);
-        List<Coordinate> candidates = extractCandidates(clone);
+        List<Coordinate> candidates = calcCandidatesNumber(clone);
 
         // 評価値の初期値を最小の値として設定する.
         int evalMax = Integer.MIN_VALUE;
@@ -59,7 +60,7 @@ public class StrongAI implements StrategyInterface{
         // 置くことができる座標それぞれの評価値を求め最も評価値の高い座標を選出する.
         for (Coordinate candidate : candidates) {
             clone.processToPlacePiece(candidate);
-            int eval = alphaBeta(clone, 3, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            int eval = alphaBeta(clone, 5, Integer.MIN_VALUE, Integer.MAX_VALUE);
             clone.goBack(1);
             if (eval > evalMax) {
                 result = candidate;
@@ -79,7 +80,7 @@ public class StrongAI implements StrategyInterface{
      * @return 評価値
      */
     private int alphaBeta(Board othello, final int depth, int alpha, int beta) {
-        List<Coordinate> candidates = extractCandidates(othello);
+        List<Coordinate> candidates = calcCandidatesNumber(othello);
         if (depth <= 0 || candidates.isEmpty()) {
             return evaluate(othello);
         }
@@ -134,31 +135,16 @@ public class StrongAI implements StrategyInterface{
     private int evaluate(Board othello) {
         Piece[][] field = othello.cloneField();
 
-        // 盤位置(BP)の評価値を計算する.
+        // 盤位置(BoardPosition)の評価値を計算する.
         int scoreBP = calcBoardPosition(field);
 
-        // 候補数(CN)の評価値を計算する.
-        int scoreCN = extractCandidates(othello).size();
+        // 候補数(CandidateNumber)の評価値を計算する.
+        int scoreCN = calcCandidatesNumber(othello).size();
 
-        return scoreBP*5 + scoreCN;
-    }
+        // 自石の数(HavingNumber)に基づいて評価値を計算する.
+        int scoreHN = calcHavingNumber(othello);
 
-    /**
-     * コマを置くことが可能な座標をすべて取得する.
-     *
-     * @param othello フィールドの盤面を保持するオブジェクト.
-     * @return すべての可能な手.
-     */
-    private List<Coordinate> extractCandidates(Board othello) {
-        List<Coordinate> coordinates = new ArrayList<>();
-        for (int r = 0; r < ROW; r++) {
-            for (int c = 0; c < COL; c++) {
-                if (othello.canPutPiece(Coordinate.valueOf(r, c))) {
-                    coordinates.add(Coordinate.valueOf(r, c));
-                }
-            }
-        }
-        return coordinates;
+        return scoreBP*3 + scoreCN + scoreHN*5;
     }
 
     /**
@@ -173,10 +159,39 @@ public class StrongAI implements StrategyInterface{
         int scoreBP = 0;
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
-                scoreBP += BoardPosition[r][c]*toIntForPiece(field[r][c]);
+                scoreBP += PositionScore[r][c]*toIntForPiece(field[r][c]);
             }
         }
         return scoreBP;
+    }
+
+    /**
+     * コマを置くことが可能な座標をすべて取得する.
+     *
+     * @param othello フィールドの盤面を保持するオブジェクト.
+     * @return すべての可能な手.
+     */
+    private List<Coordinate> calcCandidatesNumber(Board othello) {
+        List<Coordinate> coordinates = new ArrayList<>();
+        for (int r = 0; r < ROW; r++) {
+            for (int c = 0; c < COL; c++) {
+                if (othello.canPutPiece(Coordinate.valueOf(r, c))) {
+                    coordinates.add(Coordinate.valueOf(r, c));
+                }
+            }
+        }
+        return coordinates;
+    }
+
+    /**
+     * 自石と相手の石から評価値を計算する.
+     *
+     * @param othello 盤面の状態を保持するオブジェクト.
+     * @return 評価値.
+     */
+    private int calcHavingNumber(Board othello) {
+        Map<PieceType, Integer> havingScores = othello.getEachPiecesCnt();
+        return havingScores.get(me) - havingScores.get(Piece.getEnemyType(me));
     }
 
     /**

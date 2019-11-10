@@ -13,10 +13,10 @@ public class Main {
         Board othello = new Board();
 
         System.out.println("ゲーム開始");
+        StrategyMgr strategy = new StrategyMgr(choiceGameMode());
 
         // 初期表示
         othello.printField();
-        StrategyMgr strategy = new StrategyMgr(choiceGameMode());
 
         while (!othello.isGameOver()) {
             // 手番がコマを置けなければ手番を相手に移す
