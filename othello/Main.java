@@ -3,8 +3,6 @@ package othello;
 import othello.strategy.GameMode;
 import othello.strategy.StrategyMgr;
 
-import java.util.Scanner;
-
 /**
  * オセロのゲームを進行するメインクラス
  */
@@ -13,7 +11,7 @@ public class Main {
         Board othello = new Board();
 
         System.out.println("ゲーム開始");
-        StrategyMgr strategy = new StrategyMgr(choiceGameMode());
+        StrategyMgr strategy = new StrategyMgr(GameMode.choiceGameMode());
 
         // 初期表示
         othello.printField();
@@ -43,32 +41,10 @@ public class Main {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
 
         System.out.println("ゲーム終了");
-    }
-
-    /**
-     * ゲームのモードを標準入力により選択する.
-     *
-     * @return 入力に対応するゲームモード.
-     */
-    private static GameMode choiceGameMode() {
-        while (true) {
-            System.out.println("プレイするモードを選択してください");
-
-            GameMode.printCandidate();
-
-            String mode = new Scanner(System.in).nextLine().trim();
-
-            // 入力がゲームのモードに存在していれば処理を抜ける.
-            for (GameMode g : GameMode.values()) {
-                if (g.getMode().equals(mode)) {
-                    return g;
-                }
-            }
-            System.out.println("正しい選択肢を入力してください");
-        }
     }
 }
 

@@ -198,7 +198,7 @@ public class Board {
      * 手番を次に移す.
      */
     public void nextTurn() {
-        currentTurn = Piece.getEnemyType(currentTurn);
+        currentTurn = PieceType.getEnemyType(currentTurn);
     }
 
     /**
@@ -310,7 +310,7 @@ public class Board {
             if (fieldLogger.isEmpty()) {
                 return;
             }
-            currentTurn = Piece.getEnemyType(currentTurn);
+            currentTurn = PieceType.getEnemyType(currentTurn);
             field = fieldLogger.removeFirst();
         }
     }
@@ -361,7 +361,7 @@ public class Board {
         if (!isInsideField(target)) {
             return false;
         }
-        if (getFieldPieceAt(target).getState() != Piece.getEnemyType(currentTurn)) {
+        if (getFieldPieceAt(target).getState() != PieceType.getEnemyType(currentTurn)) {
             // となりのコマは相手のコマでなければならない.
             return false;
         }

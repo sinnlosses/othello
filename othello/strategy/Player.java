@@ -7,11 +7,6 @@ import java.util.Scanner;
 
 public class Player implements StrategyInterface{
 
-    /**
-     * コマの状況を保持しているフィールド
-     */
-    private Board othello;
-
     public Player() {
         // 処理なし
     }

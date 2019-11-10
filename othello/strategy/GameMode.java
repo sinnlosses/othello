@@ -1,21 +1,44 @@
 package othello.strategy;
 
+import java.util.Scanner;
+
 /**
  * プレイできるゲームモードの列挙.
  */
 public enum GameMode {
     PLAYERS("1"),
     WEAK_AI("2"),
-    STRONG_AI("3"),
-    AIS("4");
+    NORMAL_AI("3"),
+    STRONG_AI("4"),
+    AIS("5");
 
-    public static void printCandidate() {
-        System.out.println(String.format("%s: プレイヤー同士 %s: 対AI(弱) %s: 対AI(強) %s: AI同士(弱VS強)",
-                PLAYERS.getMode(),
-                WEAK_AI.getMode(),
-                STRONG_AI.getMode(),
-                AIS.getMode()));
-        System.out.println(String.format("例: %s", GameMode.PLAYERS.getMode()));
+    /**
+     * ゲームのモードを標準入力により選択する.
+     *
+     * @return 入力に対応するゲームモード.
+     */
+    public static GameMode choiceGameMode() {
+        while (true) {
+            System.out.println("プレイするモードを選択してください");
+
+            System.out.println(String.format("%s: プレイヤー同士 %s: 対AI(弱) %s: 対AI(並) %s: 対AI(強) %s: AI同士(弱VS強)",
+                    PLAYERS.mode,
+                    WEAK_AI.mode,
+                    NORMAL_AI.mode,
+                    STRONG_AI.mode,
+                    AIS.mode));
+            System.out.println(String.format("例: %s", GameMode.PLAYERS.mode));
+
+            String mode = new Scanner(System.in).nextLine().trim();
+
+            // 入力がゲームのモードに存在していれば処理を抜ける.
+            for (GameMode g : GameMode.values()) {
+                if (g.mode.equals(mode)) {
+                    return g;
+                }
+            }
+            System.out.println("正しい選択肢を入力してください");
+        }
     }
 
     /**
@@ -25,15 +48,6 @@ public enum GameMode {
 
     GameMode(String mode) {
         this.mode = mode;
-    }
-
-    /**
-     * ゲームモードに対応する文字列を取得する.
-     *
-     * @return 対応番号.
-     */
-    public String getMode() {
-        return mode;
     }
 
 }

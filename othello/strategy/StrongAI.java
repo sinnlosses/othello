@@ -1,18 +1,15 @@
 package othello.strategy;
 
-import othello.Coordinate;
 import othello.Board;
 import othello.Piece;
 import othello.PieceType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * アルファベータ法による評価値の計算用クラス.
+ *
+ * 継承元から評価関数を変更し, 詳細に盤面を評価するように改善されている.
  */
-public class StrongAI implements StrategyInterface{
+public class StrongAI extends NormalAI {
     /**
      * フィールドの行数.
      */
@@ -33,97 +30,15 @@ public class StrongAI implements StrategyInterface{
                                             {-11, -16, -1, -3, -3, 2, -16, -11},
                                             {45, -11, 4, -1, -1, 4, -11, 45}
     };
+
     /**
      * 自分のコマの種類.
      */
     private final PieceType me;
 
     public StrongAI(PieceType me) {
+        super(me);
         this.me = me;
-    }
-
-    /**
-     * コマを置く座標を決定する.
-     *
-     * @param othello 現在の状態を保持したオブジェクト.
-     * @return 評価値の最も高い座標.
-     */
-    @Override
-    public Coordinate decideCoordinate(Board othello) {
-        Board clone = othello.cloneInstance();
-        Coordinate result = Coordinate.valueOf(-1, -1);
-        List<Coordinate> candidates = calcCandidatesNumber(clone);
-
-        // 評価値の初期値を最小の値として設定する.
-        int evalMax = Integer.MIN_VALUE;
-
-        // 置くことができる座標それぞれの評価値を求め最も評価値の高い座標を選出する.
-        for (Coordinate candidate : candidates) {
-            clone.processToPutPiece(candidate);
-            int eval = alphaBeta(clone, 5, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            clone.goBack(1);
-            if (eval > evalMax) {
-                result = candidate;
-                evalMax = eval;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * アルファベータ法による座標の選定を行う.
-     *
-     * @param othello 評価する盤面を保持するオブジェクト.
-     * @param depth 深さ制限.
-     * @param alpha α値. このノードの評価値は必ずα値以上となる.
-     * @param beta β値. このノードの評価値は必ずβ値以下となる.
-     * @return 評価値
-     */
-    private int alphaBeta(Board othello, final int depth, int alpha, int beta) {
-        List<Coordinate> candidates = calcCandidatesNumber(othello);
-        if (depth <= 0 || candidates.isEmpty()) {
-            return evaluate(othello);
-        }
-
-        int upperBound = Integer.MAX_VALUE;
-        int lowerBound = Integer.MIN_VALUE;
-
-        for (Coordinate candidate : candidates) {
-            othello.processToPutPiece(candidate);
-            othello.nextTurn();
-
-            // 子ノードの評価値を計算する.
-            int childValue = alphaBeta(othello, depth-1, alpha, beta);
-
-            if (othello.getCurrentTurn() != me) {
-                // 自分のノードの場合は子ノードの最大値を求める.
-                if (childValue > lowerBound) {
-                    lowerBound = childValue;
-                    alpha = childValue;
-                }
-                if (lowerBound > beta) {
-                    // βカット
-                    othello.goBack(1);
-                    return childValue;
-                }
-            } else {
-                // 相手のノードの場合は子ノードの最小値を求める.
-                if (childValue < upperBound) {
-                    upperBound = childValue;
-                    beta = childValue;
-                }
-                if (upperBound < alpha) {
-                    // αカット
-                    othello.goBack(1);
-                    return childValue;
-                }
-            }
-            othello.goBack(1);
-        }
-        if (othello.getCurrentTurn() == me) {
-            return alpha;
-        }
-        return beta;
     }
 
     /**
@@ -132,19 +47,20 @@ public class StrongAI implements StrategyInterface{
      * @param othello 評価対象の盤面の情報を保持するオブジェクト.
      * @return 盤面の評価値.
      */
-    private int evaluate(Board othello) {
+    @Override
+    protected int evaluate(Board othello) {
         Piece[][] field = othello.cloneField();
 
         // 盤位置(BoardPosition)の評価値を計算する.
         int scoreBP = calcBoardPosition(field);
 
         // 候補数(CandidateNumber)の評価値を計算する.
-        int scoreCN = calcCandidatesNumber(othello).size();
+        int scoreCN = calcCandidatesNumber(othello);
 
         // 自石の数(HavingNumber)に基づいて評価値を計算する.
-        int scoreHN = calcHavingNumber(othello);
+        int scoreHN = super.evaluate(othello);
 
-        return scoreBP*3 + scoreCN + scoreHN*5;
+        return scoreBP*3 + scoreCN*10 + scoreHN*3;
     }
 
     /**
@@ -166,32 +82,13 @@ public class StrongAI implements StrategyInterface{
     }
 
     /**
-     * コマを置くことが可能な座標をすべて取得する.
-     *
-     * @param othello フィールドの盤面を保持するオブジェクト.
-     * @return すべての可能な手.
-     */
-    private List<Coordinate> calcCandidatesNumber(Board othello) {
-        List<Coordinate> coordinates = new ArrayList<>();
-        for (int r = 0; r < ROW; r++) {
-            for (int c = 0; c < COL; c++) {
-                if (othello.canPutPiece(Coordinate.valueOf(r, c))) {
-                    coordinates.add(Coordinate.valueOf(r, c));
-                }
-            }
-        }
-        return coordinates;
-    }
-
-    /**
-     * 自石と相手の石から評価値を計算する.
+     * 自分が置くことができるコマの数を返す.
      *
      * @param othello 盤面の状態を保持するオブジェクト.
-     * @return 評価値.
+     * @return 置くことが可能なコマの数
      */
-    private int calcHavingNumber(Board othello) {
-        Map<PieceType, Integer> havingScores = othello.getEachPiecesCnt();
-        return havingScores.get(me) - havingScores.get(Piece.getEnemyType(me));
+    private int calcCandidatesNumber(Board othello) {
+        return super.getCandidates(othello).size();
     }
 
     /**
