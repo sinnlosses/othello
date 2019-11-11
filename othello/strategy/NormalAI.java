@@ -147,7 +147,7 @@ public class NormalAI implements StrategyInterface{
      * @param othello 盤面の状態を保持するオブジェクト.
      * @return 評価値.
      */
-    private int calcHavingNumber(Board othello) {
+    protected int calcHavingNumber(Board othello) {
         Map<PieceType, Integer> havingScores = othello.getEachPiecesCnt();
         return havingScores.get(me);
     }

@@ -96,8 +96,8 @@ public final class Coordinate implements Comparable<Coordinate>{
      * @return 移動後の座標.
      */
     public Coordinate move(Vector moveTo) {
-        int movedRow = row + moveTo.getVectorRow();
-        int movedCol = col + moveTo.getVectorCol();
+        final int movedRow = row + moveTo.getVectorRow();
+        final int movedCol = col + moveTo.getVectorCol();
 
         return Coordinate.valueOf(movedRow, movedCol);
     }
