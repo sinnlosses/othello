@@ -46,6 +46,8 @@ public class StrategyMgr {
                 strategyForPiece.put(PieceType.BLACK, new WeakAI());
                 strategyForPiece.put(PieceType.WHITE, new StrongAI(PieceType.WHITE));
                 break;
+            default:
+                throw new IllegalArgumentException("指定したゲームモードはありません");
         }
     }
 
