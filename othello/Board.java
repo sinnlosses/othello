@@ -4,13 +4,13 @@ import java.util.*;
 
 /**
  * オセロのフィールドを構築するクラス.
- *
+ * <p>
  * 役割.
  * <ul>
- * <li>現在のプレイヤーの管理</li>
+ * <li>手番の管理</li>
  * <li>フィールドの状態管理</li>
  * <li>フィールドへのコマの設置</li>
- * <li>スコア管理</li>
+ * <li>ログ管理</li>
  * </ul>
  *
  */
@@ -26,16 +26,18 @@ public class Board {
     /**
      * アルファベットを対応する行番号に変換する.
      *
-     * <pre>a → 0, b → 1 ... h → 7</pre>
+     * <pre>
+     *     a → 0, b → 1 ... h → 7
+     * </pre>
      *
-     * @param alphabetRow 変換するアルファベット
+     * @param alphabet 行番号に変換する対象のアルファベット
      * @return 対応する行番号(対応する行番号がない場合-1)
      */
-    public static int toRowNumber(final String alphabetRow) {
-        if (alphabetRow.trim().length() != 1) {
+    public static int toRowNumber(final String alphabet) {
+        if (alphabet.trim().length() != 1) {
             return -1;
         }
-        return ROW_ALPHABETS.indexOf(alphabetRow.trim().toUpperCase());
+        return ROW_ALPHABETS.indexOf(alphabet.trim().toUpperCase());
     }
     /**
      * 番号を対応する列番号に変換する.
@@ -72,7 +74,7 @@ public class Board {
 
     /**
      * オセロのフィールドを生成する.
-     *
+     * <p>
      * 初期化される項目は以下.
      * <ul>
      *     <li>フィールドの盤面ログ</li>
@@ -114,9 +116,9 @@ public class Board {
     }
 
     /**
-     * 本インスタンスのフィールドの状態を複製する.
+     * 保持している盤面の状態を複製する.
      *
-     * @return 現在のフィールドの状態の複製.
+     * @return 現在の盤面の複製
      */
     public Piece[][] cloneField() {
         Piece[][] newField = new Piece[ROW][COL];
@@ -141,12 +143,13 @@ public class Board {
     }
 
     /**
-     * 白、黒、空きの数を返す.
+     * 白、黒、空きそれぞれの数を返す.
      *
-     * @return 白、黒、空きのコマの数のマップ
+     * @return 白、黒、空きのコマの数を格納したオブジェクト
      */
     public Map<PieceType, Integer> getEachPiecesCnt() {
         Map<PieceType, Integer> PiecesCnt = new EnumMap<>(PieceType.class);
+        // 初期化が必要. 初期化しなければフィールドに存在しないキーが登録されない.
         for (PieceType pieceType : PieceType.values()) {
             PiecesCnt.put(pieceType, 0);
         }
@@ -179,7 +182,7 @@ public class Board {
     }
 
     /**
-     * 手番がコマを置くことができるかどうかを調べる.
+     * 手番がコマを置ける座標があるか調べる.
      *
      * @return コマを置くことができる場合 {@code true}
      */
@@ -202,11 +205,10 @@ public class Board {
     }
 
     /**
-     * コマを置くことができるかどうかを判定する.
+     * 指定した座標にコマを置くことができるかどうかを判定する.
      *
      * <p>
-     * 入力座標はフィールドの範囲外であってもよい(例外は排出しない).
-     * </p>
+     * フィールドの範囲外の座標を指定しても例外は排出しない.
      *
      * @param coordinate 置く座標
      * @return コマを置くことができる場合 {@code true}
@@ -232,7 +234,7 @@ public class Board {
     }
 
     /**
-     * コマを置く場合に必要な処理をまとめて行う.
+     * コマを置く場合に必要な処理を行う.
      * 具体的には
      * <ol>
      *     <li>コマを指定の座標に置く</li>
@@ -258,7 +260,7 @@ public class Board {
      *     <li>現在のスコアの表示.</li>
      * </ol>
      *
-     * @param coordinate コマの情報を表示する座標.
+     * @param coordinate コマの情報を表示する座標
      */
     public void printResult(Coordinate coordinate) {
         printField();
@@ -269,7 +271,7 @@ public class Board {
     /**
      * 指定された座標の行と列の情報を表示する.
      *
-     * @param coordinate 表示したい座標
+     * @param coordinate 表示する座標
      */
     public void printPutCoordinate(Coordinate coordinate) {
         final String row = ROW_ALPHABETS.split("")[coordinate.getRow()];
@@ -303,7 +305,7 @@ public class Board {
     /**
      * ログをさかのぼりフィールドの状態を戻す.
      *
-     * @param howMany いくつ前の状態に戻すか.
+     * @param howMany いくつ前の状態に戻すか
      */
     public void goBack(int howMany) {
         for (int i = 0; i < howMany; i++) {
@@ -318,7 +320,7 @@ public class Board {
     /**
      * フィールドを文字列化して返す.
      *
-     * @return フィールド
+     * @return 行番号, 列番号, フィールドの状態を文字列として表現したもの
      */
     @Override
     public String toString() {
@@ -348,11 +350,11 @@ public class Board {
     }
 
     /**
-     * コマを置いた場所から見て指定された方向の先に自分のコマがあるか調べる.
+     * 指定した座標から見て指定した方向に関して相手のコマを挟んでいるかを調べる.
      *
-     * @param coordinate 置く座標
+     * @param coordinate 調べる根本となる座標
      * @param vector 調べる方向
-     * @return 自分のコマがあるかどうか
+     * @return 相手のコマを挟んでいる場合 {@code true}
      */
     private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
         // 調べる対象の座標. 入力の座標から指定した方向へ移動させる.
@@ -365,11 +367,10 @@ public class Board {
             // となりのコマは相手のコマでなければならない.
             return false;
         }
-
         target = target.move(vector);
 
         while (isInsideField(target)) {
-            // 2つとなり以降の場合、コマが途切れている場合は相手のコマを挟んでいない.
+            // 2つ以降離れている場合、コマが途切れている場合は相手のコマを挟んでいない.
             // 自分のコマである場合相手のコマを挟んでいる.
             if (getFieldPieceAt(target).getState() == PieceType.EMPTY) {
                 return false;
@@ -377,10 +378,8 @@ public class Board {
             if (getFieldPieceAt(target).getState() == currentTurn) {
                 return true;
             }
-
             target = target.move(vector);
         }
-
         return false;
     }
 
@@ -391,11 +390,13 @@ public class Board {
      * 前提として, 座標はフィールドの範囲内であること.
      * また, すでにコマが置かれていたとしてもエラーとならず、
      * 指定した座標のコマは現在の手番のコマの状態となる.
-     * </p>
      *
      * @param coordinate コマを置く座標
      */
     private void putPiece(final Coordinate coordinate) {
+        if (!isInsideField(coordinate)) {
+            throw new IllegalArgumentException("指定した座標には置けません");
+        }
         getFieldPieceAt(coordinate).setState(currentTurn);
     }
 
@@ -424,7 +425,6 @@ public class Board {
      * <p>
      * このメソッドはすでに調べる方向の先に自分のコマがあることが判明していることが前提となっている.
      * そのためフィールドの外部に座標を指定するとエラーを排出する.
-     * </p>
      *
      * @param coordinate ひっくり返す始点となる座標
      * @param vector ひっくり返す方向
@@ -441,7 +441,7 @@ public class Board {
     }
 
     /**
-     * 現在のフィールドをスタックに保存する.
+     * 現在のフィールドを複製してログを保持するオブジェクトに登録する.
      */
     private void logField() {
         fieldLogger.addFirst(cloneField());
@@ -450,8 +450,8 @@ public class Board {
     /**
      * 指定した座標におけるフィールドのコマを取得する.
      *
-     * @param coordinate コマの状態を取得する対象の座標.
-     * @return コマの状態を保持するオブジェクト.
+     * @param coordinate コマの状態を取得する対象の座標
+     * @return コマの状態を保持するオブジェクト
      */
     private Piece getFieldPieceAt(Coordinate coordinate) {
         return field[coordinate.getRow()][coordinate.getCol()];

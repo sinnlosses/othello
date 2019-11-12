@@ -24,8 +24,8 @@ public class WeakAI implements StrategyInterface{
     /**
      * コマを置く座標をランダムに決定する.
      *
-     * @param othello 盤面の情報を保持するオブジェクト.
-     * @return コマを置く座標.
+     * @param othello 盤面の情報を保持するオブジェクト
+     * @return コマを置く座標
      */
     @Override
     public Coordinate decideCoordinate(final Board othello) {

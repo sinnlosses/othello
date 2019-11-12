@@ -19,9 +19,12 @@ public class StrategyMgr {
     private EnumMap<PieceType, StrategyInterface> strategyForPiece;
 
     /**
-     * それぞれのコマに対応する戦略を初期化を行う.
+     * 指定されたゲームモードに対応して,
+     * それぞれのコマのプレイヤーに対応する戦略の管理を行う.
      *
-     * @param gameMode 本プログラムによって選ぶことができるゲームモードの選択肢.
+     * 例えば黒のコマの戦略は人間が, 白のコマの戦略はAIが担当するなど.
+     *
+     * @param gameMode 本プログラムによって選ぶことができるゲームモードの選択肢
      */
     public StrategyMgr(GameMode gameMode) {
         strategyForPiece = new EnumMap<>(PieceType.class);
@@ -54,8 +57,8 @@ public class StrategyMgr {
     /**
      * 戦略に基づきコマを置く座標を決定する.
      *
-     * @param othello 盤面の状態を保持するオブジェクト.
-     * @return コマを置く座標.
+     * @param othello 盤面の状態を保持するオブジェクト
+     * @return コマを置く座標
      */
     public Coordinate decideCoordinate(Board othello) {
         return strategyForPiece.get(othello.getCurrentTurn()).decideCoordinate(othello);

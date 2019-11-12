@@ -50,9 +50,9 @@ public final class Coordinate implements Comparable<Coordinate>{
     /**
      * 指定した行番号と列番号を持つ座標を二分探索する.
      *
-     * @param row 探索する行番号.
-     * @param col 探索する列番号.
-     * @return 見つかった場合そのインデックス, そうでない場合は-1.
+     * @param row 探索する行番号
+     * @param col 探索する列番号
+     * @return 見つかった場合そのインデックス, そうでない場合は-1
      */
     private static int binarySearch(final int row, final int col) {
         int low = 0;
@@ -92,8 +92,8 @@ public final class Coordinate implements Comparable<Coordinate>{
     /**
      * 座標を指定されたベクトルへ移動する.
      *
-     * @param moveTo 移動方向.
-     * @return 移動後の座標.
+     * @param moveTo 移動方向
+     * @return 移動後の座標
      */
     public Coordinate move(Vector moveTo) {
         final int movedRow = row + moveTo.getVectorRow();
@@ -123,8 +123,8 @@ public final class Coordinate implements Comparable<Coordinate>{
     /**
      * オブジェクト同士を比較する.
      *
-     * @param o 比較対象.
-     * @return 自身が比較対象と比べて大きければ1, 等しければ0, 小さければ-1.
+     * @param o 比較対象
+     * @return 自身が比較対象と比べて大きければ1, 等しければ0, 小さければ-1
      */
     @Override
     public int compareTo(Coordinate o) {

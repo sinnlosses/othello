@@ -6,7 +6,7 @@ import othello.Board;
 import java.util.Scanner;
 
 /**
- * 標準入力を用いてコマの座標を決定するクラス.
+ * 人間がコマの座標を決定するためのクラス.
  */
 public class Player implements StrategyInterface{
 

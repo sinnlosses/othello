@@ -6,16 +6,21 @@ import java.util.Scanner;
  * プレイできるゲームモードの列挙.
  */
 public enum GameMode {
+    /** 人間同士で対戦するゲームモード*/
     PLAYERS("1"),
+    /** 対AI(弱)と対戦するゲームモード */
     WEAK_AI("2"),
+    /** 対AI(並)と対戦するゲームモード */
     NORMAL_AI("3"),
+    /** 対AI(強)と対戦するゲームモード */
     STRONG_AI("4"),
+    /** AI同士と対戦するゲームモード */
     AIS("5");
 
     /**
      * ゲームのモードを標準入力により選択する.
      *
-     * @return 入力に対応するゲームモード.
+     * @return 入力に対応するゲームモード
      */
     public static GameMode choiceGameMode() {
         while (true) {

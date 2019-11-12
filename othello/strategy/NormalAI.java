@@ -32,8 +32,8 @@ public class NormalAI implements StrategyInterface{
     /**
      * コマを置く座標を決定する.
      *
-     * @param othello 現在の状態を保持したオブジェクト.
-     * @return 評価値の最も高い座標.
+     * @param othello 現在の状態を保持したオブジェクト
+     * @return 評価値の最も高い座標
      */
     @Override
     public Coordinate decideCoordinate(Board othello) {
@@ -60,8 +60,8 @@ public class NormalAI implements StrategyInterface{
     /**
      * オセロの盤面を評価する.
      *
-     * @param othello 評価対象の盤面の情報を保持するオブジェクト.
-     * @return 盤面の評価値.
+     * @param othello 評価対象の盤面の情報を保持するオブジェクト
+     * @return 盤面の評価値
      */
     protected int evaluate(Board othello) {
         return calcHavingNumber(othello);
@@ -70,8 +70,8 @@ public class NormalAI implements StrategyInterface{
     /**
      * コマを置くことが可能な座標をすべて取得する.
      *
-     * @param othello フィールドの盤面を保持するオブジェクト.
-     * @return すべての可能な手.
+     * @param othello フィールドの盤面を保持するオブジェクト
+     * @return すべての可能な手
      */
     protected List<Coordinate> getCandidates(Board othello) {
         List<Coordinate> coordinates = new ArrayList<>();
@@ -88,10 +88,10 @@ public class NormalAI implements StrategyInterface{
     /**
      * アルファベータ法による座標の選定を行う.
      *
-     * @param othello 評価する盤面を保持するオブジェクト.
-     * @param depth 深さ制限.
-     * @param alpha α値. このノードの評価値は必ずα値以上となる.
-     * @param beta β値. このノードの評価値は必ずβ値以下となる.
+     * @param othello 評価する盤面を保持するオブジェクト
+     * @param depth 深さ制限
+     * @param alpha α値. このノードの評価値は必ずα値以上となる
+     * @param beta β値. このノードの評価値は必ずβ値以下となる
      * @return 評価値
      */
     private int alphaBeta(Board othello, final int depth, int alpha, int beta) {
@@ -144,8 +144,8 @@ public class NormalAI implements StrategyInterface{
     /**
      * 自石と相手の石から評価値を計算する.
      *
-     * @param othello 盤面の状態を保持するオブジェクト.
-     * @return 評価値.
+     * @param othello 盤面の状態を保持するオブジェクト
+     * @return 評価値
      */
     protected int calcHavingNumber(Board othello) {
         Map<PieceType, Integer> havingScores = othello.getEachPiecesCnt();

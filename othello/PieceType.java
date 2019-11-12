@@ -4,8 +4,11 @@ package othello;
  * コマの表示に使用する文字の列挙.
  */
 public enum PieceType {
+    /** 白のコマ */
     WHITE("○"),
+    /** 黒のコマ */
     BLACK("●"),
+    /** 空の状態 */
     EMPTY("#");
 
     /**

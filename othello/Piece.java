@@ -38,7 +38,7 @@ public final class Piece {
     /**
      * コマが空きを表す状態かどうかを判定するメソッド.
      *
-     * @return 空き状態ならtrue, そうでないならfalse
+     * @return 空き状態なら {@code true}, そうでないなら {@code false}
      */
     public boolean isEmpty() {
         return state == PieceType.EMPTY;

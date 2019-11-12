@@ -44,8 +44,8 @@ public class StrongAI extends NormalAI {
     /**
      * オセロの盤面を評価する.
      *
-     * @param othello 評価対象の盤面の情報を保持するオブジェクト.
-     * @return 盤面の評価値.
+     * @param othello 評価対象の盤面の情報を保持するオブジェクト
+     * @return 盤面の評価値
      */
     @Override
     protected int evaluate(Board othello) {
@@ -84,7 +84,7 @@ public class StrongAI extends NormalAI {
     /**
      * 自分が置くことができるコマの数を返す.
      *
-     * @param othello 盤面の状態を保持するオブジェクト.
+     * @param othello 盤面の状態を保持するオブジェクト
      * @return 置くことが可能なコマの数
      */
     private int calcCandidatesNumber(Board othello) {
