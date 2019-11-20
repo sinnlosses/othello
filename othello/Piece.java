@@ -18,7 +18,7 @@ public final class Piece {
     }
 
     /**
-     * コマの状態を取得するgetterメソッド.
+     * コマの状態を取得するgetter.
      *
      * @return コマの状態
      */
@@ -27,7 +27,7 @@ public final class Piece {
     }
 
     /**
-     * コマの状態を更新するsetterメソッド.
+     * コマの状態を更新するsetter.
      *
      * @param state 更新後のコマの状態
      */
@@ -36,7 +36,7 @@ public final class Piece {
     }
 
     /**
-     * コマが空きを表す状態かどうかを判定するメソッド.
+     * コマが空きを表す状態かどうかを判定する.
      *
      * @return 空き状態なら {@code true}, そうでないなら {@code false}
      */

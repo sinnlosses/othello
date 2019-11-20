@@ -332,7 +332,7 @@ public class Board {
         StringBuilder sb = new StringBuilder();
 
         // 列番号の並び
-        // 先頭の空白は行列の交差する部分を示す
+        // 先頭の空白は行列の左上を指す
         sb.append(colNumbers).append(lineSeparator);
 
         // 行番号と各フィールドの値が1行分の値
@@ -392,6 +392,7 @@ public class Board {
      * 指定した座標のコマは現在の手番のコマの状態となる.
      *
      * @param coordinate コマを置く座標
+     * @throws IllegalArgumentException フィールド外の座標を指定した場合
      */
     private void putPiece(final Coordinate coordinate) {
         if (!isInsideField(coordinate)) {

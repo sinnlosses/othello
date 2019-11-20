@@ -32,7 +32,7 @@ public final class Coordinate implements Comparable<Coordinate>{
      * 新規であれば新しくオブジェクトを生成して返す.
      *
      * @param row 行番号
-     * @param col 列番業
+     * @param col 列番号
      * @return インスタンス
      */
     synchronized public static Coordinate valueOf(final int row, final int col) {
@@ -90,7 +90,7 @@ public final class Coordinate implements Comparable<Coordinate>{
     }
 
     /**
-     * 座標を指定されたベクトルへ移動する.
+     * 指定されたベクトルへ移動した座標を返す.
      *
      * @param moveTo 移動方向
      * @return 移動後の座標
