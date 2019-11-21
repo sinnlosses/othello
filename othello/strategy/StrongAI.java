@@ -48,7 +48,7 @@ public class StrongAI extends NormalAI {
      * @return 盤面の評価値
      */
     @Override
-    protected int evaluate(Board othello) {
+    int evaluate(Board othello) {
         Piece[][] field = othello.cloneField();
 
         // 盤位置(BoardPosition)の評価値を計算する.

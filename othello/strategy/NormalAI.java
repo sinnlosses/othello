@@ -63,7 +63,7 @@ public class NormalAI implements StrategyInterface{
      * @param othello 評価対象の盤面の情報を保持するオブジェクト
      * @return 盤面の評価値
      */
-    protected int evaluate(Board othello) {
+    int evaluate(Board othello) {
         return calcHavingNumber(othello);
     }
 
@@ -73,7 +73,7 @@ public class NormalAI implements StrategyInterface{
      * @param othello フィールドの盤面を保持するオブジェクト
      * @return すべての可能な手
      */
-    protected List<Coordinate> getCandidates(Board othello) {
+    List<Coordinate> getCandidates(Board othello) {
         List<Coordinate> coordinates = new ArrayList<>();
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
@@ -83,6 +83,17 @@ public class NormalAI implements StrategyInterface{
             }
         }
         return coordinates;
+    }
+
+    /**
+     * 自石と相手の石から評価値を計算する.
+     *
+     * @param othello 盤面の状態を保持するオブジェクト
+     * @return 評価値
+     */
+    int calcHavingNumber(Board othello) {
+        Map<PieceType, Integer> havingScores = othello.getEachPiecesCnt();
+        return havingScores.get(me);
     }
 
     /**
@@ -139,17 +150,6 @@ public class NormalAI implements StrategyInterface{
             return alpha;
         }
         return beta;
-    }
-
-    /**
-     * 自石と相手の石から評価値を計算する.
-     *
-     * @param othello 盤面の状態を保持するオブジェクト
-     * @return 評価値
-     */
-    protected int calcHavingNumber(Board othello) {
-        Map<PieceType, Integer> havingScores = othello.getEachPiecesCnt();
-        return havingScores.get(me);
     }
 }
 
