@@ -58,7 +58,7 @@ public class StrongAI extends NormalAI {
         int scoreCN = calcCandidatesNumber(othello);
 
         // 自石の数(HavingNumber)に基づいて評価値を計算する.
-        int scoreHN = super.evaluate(othello);
+        int scoreHN = super.calcHavingNumber(othello);
 
         return scoreBP*3 + scoreCN*10 + scoreHN*3;
     }

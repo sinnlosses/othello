@@ -18,7 +18,7 @@ public final class Piece {
     }
 
     /**
-     * コマの状態を取得するgetter.
+     * コマの状態を取得する.
      *
      * @return コマの状態
      */
@@ -27,7 +27,7 @@ public final class Piece {
     }
 
     /**
-     * コマの状態を更新するsetter.
+     * コマの状態を更新する.
      *
      * @param state 更新後のコマの状態
      */
