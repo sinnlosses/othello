@@ -49,7 +49,7 @@ public class NormalAI implements StrategyInterface{
             clone.processToPutPiece(candidate);
             int eval = alphaBeta(clone, 5, Integer.MIN_VALUE, Integer.MAX_VALUE);
             clone.goBack(1);
-            if (eval > evalMax) {
+            if (eval >= evalMax) {
                 result = candidate;
                 evalMax = eval;
             }
@@ -111,37 +111,26 @@ public class NormalAI implements StrategyInterface{
             return evaluate(othello);
         }
 
-        int upperBound = Integer.MAX_VALUE;
-        int lowerBound = Integer.MIN_VALUE;
-
         for (Coordinate candidate : candidates) {
             othello.processToPutPiece(candidate);
             othello.nextTurn();
 
             // 子ノードの評価値を計算する.
-            int childValue = alphaBeta(othello, depth-1, alpha, beta);
-
             if (othello.getCurrentTurn() != me) {
                 // 自分のノードの場合は子ノードの最大値を求める.
-                if (childValue > lowerBound) {
-                    lowerBound = childValue;
-                    alpha = childValue;
-                }
-                if (lowerBound > beta) {
+                alpha = Math.max(alpha, alphaBeta(othello, depth-1, alpha, beta));
+                if (alpha >= beta) {
                     // βカット
                     othello.goBack(1);
-                    return childValue;
+                    break;
                 }
             } else {
                 // 相手のノードの場合は子ノードの最小値を求める.
-                if (childValue < upperBound) {
-                    upperBound = childValue;
-                    beta = childValue;
-                }
-                if (upperBound < alpha) {
+                beta = Math.min(beta, alphaBeta(othello, depth-1, alpha, beta));
+                if (alpha >= beta) {
                     // αカット
                     othello.goBack(1);
-                    return childValue;
+                    break;
                 }
             }
             othello.goBack(1);

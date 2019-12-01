@@ -4,6 +4,8 @@ import othello.Board;
 import othello.Piece;
 import othello.PieceType;
 
+import java.util.Map;
+
 /**
  * アルファベータ法による評価値の計算用クラス.
  *
@@ -60,7 +62,10 @@ public class StrongAI extends NormalAI {
         // 自石の数(HavingNumber)に基づいて評価値を計算する.
         int scoreHN = super.calcHavingNumber(othello);
 
-        return scoreBP*3 + scoreCN*10 + scoreHN*3;
+        // ゲームが終了している場合の評価値を計算する.
+        int scoreAbsolute = calcAbsolute(othello);
+
+        return scoreBP*3 + scoreCN*10 + scoreHN*3 + scoreAbsolute;
     }
 
     /**
@@ -105,5 +110,26 @@ public class StrongAI extends NormalAI {
         } else {
             return -1;
         }
+    }
+
+    /**
+     * ゲームが終了している場合の評価値を計算する.
+     * 自分が勝利している場合は評価値をほぼ最大に,
+     * 相手が勝利している場合は評価値をほぼ最小にする
+     *
+     * @param othello 盤面を保持しているオブジェクト
+     * @return 勝利している場合最大の評価値, 敗北している場合最小の評価値
+     */
+    private int calcAbsolute(Board othello) {
+        if (!othello.isGameOver()) {
+            return 0;
+        }
+        Map<PieceType, Integer> eachPiecesCnt = othello.getEachPiecesCnt();
+        if (eachPiecesCnt.get(me) > eachPiecesCnt.get(PieceType.getEnemyType(me))) {
+            return 99999;
+        } else if ( eachPiecesCnt.get(me).equals(eachPiecesCnt.get(PieceType.getEnemyType(me))) ) {
+            return 0;
+        }
+        return -99999;
     }
 }
