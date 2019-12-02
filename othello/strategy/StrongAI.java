@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * アルファベータ法による評価値の計算用クラス.
- *
+ * <p>
  * 継承元から評価関数を変更し, 詳細に盤面を評価するように改善されている.
  */
 public class StrongAI extends NormalAI {
@@ -24,13 +24,13 @@ public class StrongAI extends NormalAI {
      * 盤面評価に使用される盤位置の評価値
      */
     private final int[][] PositionScore = {{45, -11, 4, -1, -1, 4, -11, 45},
-                                            {-11, -16, -1, -3, -3, 2, -16, -11},
-                                            {4, -1, 2, -1, -1, 2, -1, 4},
-                                            {-1, -3, -1, 0, 0, -1, -3, -1},
-                                            {-1, -3, -1, 0, 0, -1, -3, -1},
-                                            {4, -1, 2, -1, -1, 2, -1, 4},
-                                            {-11, -16, -1, -3, -3, 2, -16, -11},
-                                            {45, -11, 4, -1, -1, 4, -11, 45}
+            {-11, -16, -1, -3, -3, 2, -16, -11},
+            {4, -1, 2, -1, -1, 2, -1, 4},
+            {-1, -3, -1, 0, 0, -1, -3, -1},
+            {-1, -3, -1, 0, 0, -1, -3, -1},
+            {4, -1, 2, -1, -1, 2, -1, 4},
+            {-11, -16, -1, -3, -3, 2, -16, -11},
+            {45, -11, 4, -1, -1, 4, -11, 45}
     };
 
     /**
@@ -65,12 +65,12 @@ public class StrongAI extends NormalAI {
         // ゲームが終了している場合の評価値を計算する.
         int scoreAbsolute = calcAbsolute(othello);
 
-        return scoreBP*3 + scoreCN*10 + scoreHN*3 + scoreAbsolute;
+        return scoreBP * 3 + scoreCN * 10 + scoreHN * 3 + scoreAbsolute;
     }
 
     /**
      * 盤面を盤位置に基づいて全体評価する.
-     *
+     * <p>
      * 評価値を計算するために使用される.
      *
      * @param field 盤面
@@ -80,7 +80,7 @@ public class StrongAI extends NormalAI {
         int scoreBP = 0;
         for (int r = 0; r < ROW; r++) {
             for (int c = 0; c < COL; c++) {
-                scoreBP += PositionScore[r][c]*toIntForPiece(field[r][c]);
+                scoreBP += PositionScore[r][c] * toIntForPiece(field[r][c]);
             }
         }
         return scoreBP;
@@ -127,7 +127,7 @@ public class StrongAI extends NormalAI {
         Map<PieceType, Integer> eachPiecesCnt = othello.getEachPiecesCnt();
         if (eachPiecesCnt.get(me) > eachPiecesCnt.get(PieceType.getEnemyType(me))) {
             return 99999;
-        } else if ( eachPiecesCnt.get(me).equals(eachPiecesCnt.get(PieceType.getEnemyType(me))) ) {
+        } else if (eachPiecesCnt.get(me).equals(eachPiecesCnt.get(PieceType.getEnemyType(me)))) {
             return 0;
         }
         return -99999;

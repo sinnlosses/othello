@@ -1,13 +1,13 @@
 package othello.strategy;
 
-import othello.Coordinate;
 import othello.Board;
+import othello.Coordinate;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WeakAI implements StrategyInterface{
+public class WeakAI implements StrategyInterface {
     /**
      * フィールドの行数.
      */

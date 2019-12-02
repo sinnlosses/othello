@@ -6,12 +6,12 @@ import java.util.List;
 
 /**
  * 座標を表すクラス.
- *
+ * <p>
  * 行番号, 列番号を保持する.
  * 一度座標を設定すると取得はできるが再設定はできない.
  * インスタンスの生成にはファクトリメソッドを通して行う.
  */
-public final class Coordinate implements Comparable<Coordinate>{
+public final class Coordinate implements Comparable<Coordinate> {
     /**
      * 生成された座標を保持するリスト.
      */
@@ -26,8 +26,19 @@ public final class Coordinate implements Comparable<Coordinate>{
     private final int col;
 
     /**
-     * 本インスタンスを返すファクトリメソッド.
+     * 座標を設定するコンストラクタ.
      *
+     * @param row 行番号
+     * @param col 列番号
+     */
+    private Coordinate(final int row, final int col) {
+        this.row = row;
+        this.col = col;
+    }
+
+    /**
+     * 本インスタンスを返すファクトリメソッド.
+     * <p>
      * 指定した行番号と列番号に一致するオブジェクトがすでに保持されている場合それを返す.
      * 新規であれば新しくオブジェクトを生成して返す.
      *
@@ -56,7 +67,7 @@ public final class Coordinate implements Comparable<Coordinate>{
      */
     private static int binarySearch(final int row, final int col) {
         int low = 0;
-        int high = coordinates.size()-1;
+        int high = coordinates.size() - 1;
 
         while (low <= high) {
             int mid = (low + high) / 2;
@@ -69,24 +80,13 @@ public final class Coordinate implements Comparable<Coordinate>{
                 if (target.getCol() < col) {
                     low = mid + 1;
                 } else if (target.getCol() > col) {
-                    high = mid -1;
+                    high = mid - 1;
                 } else {
                     return mid;
                 }
             }
         }
         return -1;
-    }
-
-    /**
-     * 座標を設定するコンストラクタ.
-     *
-     * @param row 行番号
-     * @param col 列番号
-     */
-    private Coordinate(final int row, final int col) {
-        this.row = row;
-        this.col = col;
     }
 
     /**

@@ -6,16 +6,35 @@ import java.util.Scanner;
  * プレイできるゲームモードの列挙.
  */
 public enum GameMode {
-    /** 人間同士で対戦するゲームモード*/
+    /**
+     * 人間同士で対戦するゲームモード
+     */
     PLAYERS("1"),
-    /** 対AI(弱)と対戦するゲームモード */
+    /**
+     * 対AI(弱)と対戦するゲームモード
+     */
     WEAK_AI("2"),
-    /** 対AI(並)と対戦するゲームモード */
+    /**
+     * 対AI(並)と対戦するゲームモード
+     */
     NORMAL_AI("3"),
-    /** 対AI(強)と対戦するゲームモード */
+    /**
+     * 対AI(強)と対戦するゲームモード
+     */
     STRONG_AI("4"),
-    /** AI同士と対戦するゲームモード */
+    /**
+     * AI同士と対戦するゲームモード
+     */
     AIS("5");
+
+    /**
+     * ゲームモードを文字列で表した情報.
+     */
+    private String mode;
+
+    GameMode(String mode) {
+        this.mode = mode;
+    }
 
     /**
      * ゲームのモードを標準入力により選択する.
@@ -44,15 +63,6 @@ public enum GameMode {
             }
             System.out.println("正しい選択肢を入力してください");
         }
-    }
-
-    /**
-     * ゲームモードを文字列で表した情報.
-     */
-    private String mode;
-
-    GameMode(String mode) {
-        this.mode = mode;
     }
 
 }

@@ -1,6 +1,9 @@
 package othello;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * オセロのフィールドを構築するクラス.
@@ -12,7 +15,6 @@ import java.util.*;
  * <li>フィールドへのコマの設置</li>
  * <li>ログ管理</li>
  * </ul>
- *
  */
 public class Board {
     /**
@@ -24,52 +26,25 @@ public class Board {
      */
     private static final String COL_NUMBERS = "12345678";
     /**
-     * アルファベットを対応する行番号に変換する.
-     *
-     * a → 0, b → 1 ... h → 7
-     *
-     * @param alphabet 行番号に変換する対象のアルファベット
-     * @return 対応する行番号(対応する行番号がない場合-1)
-     */
-    public static int toRowNumber(final String alphabet) {
-        if (alphabet.trim().length() != 1) {
-            return -1;
-        }
-        return ROW_ALPHABETS.indexOf(alphabet.trim().toUpperCase());
-    }
-    /**
-     * 番号を対応する列番号に変換する.
-     *
-     * 1 → 0, 2 → 1, ..., 8 → 7
-     *
-     * @param col 変換対象の番号
-     * @return 対応する列番号(対応する列番号が存在しない場合-1)
-     */
-    public static int toColNumber(final String col) {
-        if (col.trim().length() != 1) {
-            return -1;
-        }
-        return COL_NUMBERS.indexOf((col.trim()));
-    }
-    /**
      * フィールドの行数.
      */
-    private final int ROW = 8;
+    private static final int ROW = 8;
     /**
      * フィールドの列数.
      */
-    private final int COL = 8;
+    private static final int COL = 8;
     /**
      * フィールド本体.
      */
     private Piece[][] field;
-
+    /**
+     * フィールドのログを保持するオブジェクト.
+     */
     private Deque<Piece[][]> fieldLogger;
     /**
      * 現在の手番.
      */
     private PieceType currentTurn;
-
     /**
      * オセロのフィールドを生成する.
      * <p>
@@ -99,8 +74,38 @@ public class Board {
     }
 
     /**
-     * 本インスタンスの複製を生成する.
+     * アルファベットを対応する行番号に変換する.
+     * <p>
+     * a → 0, b → 1 ... h → 7
      *
+     * @param alphabet 行番号に変換する対象のアルファベット
+     * @return 対応する行番号(対応する行番号がない場合 - 1)
+     */
+    public static int toRowNumber(final String alphabet) {
+        if (alphabet.trim().length() != 1) {
+            return -1;
+        }
+        return ROW_ALPHABETS.indexOf(alphabet.trim().toUpperCase());
+    }
+
+    /**
+     * 番号を対応する列番号に変換する.
+     * <p>
+     * 1 → 0, 2 → 1, ..., 8 → 7
+     *
+     * @param col 変換対象の番号
+     * @return 対応する列番号(対応する列番号が存在しない場合 - 1)
+     */
+    public static int toColNumber(final String col) {
+        if (col.trim().length() != 1) {
+            return -1;
+        }
+        return COL_NUMBERS.indexOf((col.trim()));
+    }
+
+    /**
+     * 本インスタンスの複製を生成する.
+     * <p>
      * 複製時点のフィールドの状態と手番が保持される.
      *
      * @return 本インスタンスの複製
@@ -250,7 +255,7 @@ public class Board {
 
     /**
      * コマを置いた結果を表示する.
-     *
+     * <p>
      * 具体的には
      * <ol>
      *     <li>フィールドの描画.</li>
@@ -351,7 +356,7 @@ public class Board {
      * 指定した座標から見て指定した方向に関して相手のコマを挟んでいるかを調べる.
      *
      * @param coordinate 調べる根本となる座標
-     * @param vector 調べる方向
+     * @param vector     調べる方向
      * @return 相手のコマを挟んでいる場合 {@code true}
      */
     private boolean existOwnPieceAhead(final Coordinate coordinate, final Vector vector) {
@@ -401,7 +406,7 @@ public class Board {
 
     /**
      * 指定したコマの座標から見て周囲8方向に対して自分のコマで挟んでいる相手のコマをひっくり返す.
-     *
+     * <p>
      * 前提として手番のコマを置いた後に使用すること.
      * 空の状態の座標を指定してもエラーは排出しない.
      * この場合でも周囲8方向の先に手番のコマがある場合
@@ -426,7 +431,7 @@ public class Board {
      * そのためフィールドの外部に座標を指定するとエラーを排出する.
      *
      * @param coordinate ひっくり返す始点となる座標
-     * @param vector ひっくり返す方向
+     * @param vector     ひっくり返す方向
      */
     private void flipBetweenOwnPieces(final Coordinate coordinate, final Vector vector) {
         // 移動していく座標の変数

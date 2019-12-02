@@ -1,14 +1,14 @@
 package othello.strategy;
 
-import othello.Coordinate;
 import othello.Board;
+import othello.Coordinate;
 
 import java.util.Scanner;
 
 /**
  * 人間がコマの座標を決定するためのクラス.
  */
-public class Player implements StrategyInterface{
+public class Player implements StrategyInterface {
 
     public Player() {
         // 処理なし

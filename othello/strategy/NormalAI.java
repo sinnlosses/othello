@@ -1,7 +1,7 @@
 package othello.strategy;
 
-import othello.Coordinate;
 import othello.Board;
+import othello.Coordinate;
 import othello.PieceType;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * アルファベータ法による評価値の計算用クラス.
  */
-public class NormalAI implements StrategyInterface{
+public class NormalAI implements StrategyInterface {
     /**
      * フィールドの行数.
      */
@@ -100,9 +100,9 @@ public class NormalAI implements StrategyInterface{
      * アルファベータ法による座標の選定を行う.
      *
      * @param othello 評価する盤面を保持するオブジェクト
-     * @param depth 深さ制限
-     * @param alpha α値. このノードの評価値は必ずα値以上となる
-     * @param beta β値. このノードの評価値は必ずβ値以下となる
+     * @param depth   深さ制限
+     * @param alpha   α値. このノードの評価値は必ずα値以上となる
+     * @param beta    β値. このノードの評価値は必ずβ値以下となる
      * @return 評価値
      */
     private int alphaBeta(Board othello, final int depth, int alpha, int beta) {
@@ -118,7 +118,7 @@ public class NormalAI implements StrategyInterface{
             // 子ノードの評価値を計算する.
             if (othello.getCurrentTurn() != me) {
                 // 自分のノードの場合は子ノードの最大値を求める.
-                alpha = Math.max(alpha, alphaBeta(othello, depth-1, alpha, beta));
+                alpha = Math.max(alpha, alphaBeta(othello, depth - 1, alpha, beta));
                 if (alpha >= beta) {
                     // βカット
                     othello.goBack(1);
@@ -126,7 +126,7 @@ public class NormalAI implements StrategyInterface{
                 }
             } else {
                 // 相手のノードの場合は子ノードの最小値を求める.
-                beta = Math.min(beta, alphaBeta(othello, depth-1, alpha, beta));
+                beta = Math.min(beta, alphaBeta(othello, depth - 1, alpha, beta));
                 if (alpha >= beta) {
                     // αカット
                     othello.goBack(1);

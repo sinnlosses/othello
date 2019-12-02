@@ -1,14 +1,14 @@
 package othello.strategy;
 
-import othello.Coordinate;
 import othello.Board;
+import othello.Coordinate;
 import othello.PieceType;
 
 import java.util.EnumMap;
 
 /**
  * ゲームモードを管理するクラス.
- *
+ * <p>
  * ゲームモードとは、各コマに対して誰がプレイを担当するか、
  * 例えばプレイヤー同士行う場合や敵AIと行う場合などを指す.
  */
@@ -21,7 +21,7 @@ public class StrategyMgr {
     /**
      * 指定されたゲームモードに対応して,
      * それぞれのコマのプレイヤーに対応する戦略の管理を行う.
-     *
+     * <p>
      * 例えば黒のコマの戦略は人間が, 白のコマの戦略はAIが担当するなど.
      *
      * @param gameMode 本プログラムによって選ぶことができるゲームモードの選択肢
