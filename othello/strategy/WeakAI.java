@@ -11,11 +11,11 @@ public class WeakAI implements StrategyInterface {
     /**
      * フィールドの行数.
      */
-    private final int ROW = 8;
+    private static final int ROW = 8;
     /**
      * フィールドの列数.
      */
-    private final int COL = 8;
+    private static final int COL = 8;
 
     public WeakAI() {
         // 処理なし

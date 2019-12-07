@@ -15,15 +15,16 @@ public class StrongAI extends NormalAI {
     /**
      * フィールドの行数.
      */
-    private final int ROW = 8;
+    private static final int ROW = 8;
     /**
      * フィールドの列数.
      */
-    private final int COL = 8;
+    private static final int COL = 8;
     /**
      * 盤面評価に使用される盤位置の評価値
      */
-    private final int[][] PositionScore = {{45, -11, 4, -1, -1, 4, -11, 45},
+    private final int[][] PositionScore = {
+            {45, -11, 4, -1, -1, 4, -11, 45},
             {-11, -16, -1, -3, -3, 2, -16, -11},
             {4, -1, 2, -1, -1, 2, -1, 4},
             {-1, -3, -1, 0, 0, -1, -3, -1},

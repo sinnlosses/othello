@@ -15,11 +15,11 @@ public class NormalAI implements StrategyInterface {
     /**
      * フィールドの行数.
      */
-    private final int ROW = 8;
+    private static final int ROW = 8;
     /**
      * フィールドの列数.
      */
-    private final int COL = 8;
+    private static final int COL = 8;
     /**
      * 自分のコマの種類.
      */
@@ -113,25 +113,21 @@ public class NormalAI implements StrategyInterface {
 
         for (Coordinate candidate : candidates) {
             othello.processToPutPiece(candidate);
-            othello.nextTurn();
 
             // 子ノードの評価値を計算する.
-            if (othello.getCurrentTurn() != me) {
-                // 自分のノードの場合は子ノードの最大値を求める.
+            if (othello.getCurrentTurn() == me) {
+                // 自分のノードの場合は相手に手番を渡し子ノードの最大値を求める.
+                othello.nextTurn();
                 alpha = Math.max(alpha, alphaBeta(othello, depth - 1, alpha, beta));
-                if (alpha >= beta) {
-                    // βカット
-                    othello.goBack(1);
-                    break;
-                }
             } else {
-                // 相手のノードの場合は子ノードの最小値を求める.
+                // 相手のノードの場合は自分に手番を渡し子ノードの最小値を求める.
+                othello.nextTurn();
                 beta = Math.min(beta, alphaBeta(othello, depth - 1, alpha, beta));
-                if (alpha >= beta) {
-                    // αカット
-                    othello.goBack(1);
-                    break;
-                }
+            }
+            if (alpha >= beta) {
+                // α-βカット
+                othello.goBack(1);
+                break;
             }
             othello.goBack(1);
         }
