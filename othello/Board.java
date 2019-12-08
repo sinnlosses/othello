@@ -302,7 +302,7 @@ public class Board {
      * 手番の情報を表示する.
      */
     public void printCurrentTurn() {
-        System.out.println(getCurrentTurn() + "の手番です");
+        System.out.println(currentTurn + "の手番です");
     }
 
     /**
@@ -327,7 +327,6 @@ public class Board {
      */
     @Override
     public String toString() {
-
         final String lineSeparator = System.lineSeparator();
         final String[] rowAlphabets = ROW_ALPHABETS.split("");
         final String colNumbers = "  " + String.join(" ", COL_NUMBERS.split(""));

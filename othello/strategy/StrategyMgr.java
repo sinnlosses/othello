@@ -25,6 +25,7 @@ public class StrategyMgr {
      * 例えば黒のコマの戦略は人間が, 白のコマの戦略はAIが担当するなど.
      *
      * @param gameMode 本プログラムによって選ぶことができるゲームモードの選択肢
+     * @throws IllegalArgumentException ゲームモードが存在しない場合
      */
     public StrategyMgr(GameMode gameMode) {
         strategyForPiece = new EnumMap<>(PieceType.class);
