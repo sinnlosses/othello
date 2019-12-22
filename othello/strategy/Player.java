@@ -26,7 +26,7 @@ public class Player implements StrategyInterface {
             System.out.println("行--->(a,b,c,...,h), 列--->(1,2,3,...,8)");
             System.out.println("例: a 1");
 
-            String[] inputCoordinate = new Scanner(System.in).nextLine().split(" ");
+            String[] inputCoordinate = new Scanner(System.in).nextLine().trim().split(" ");
 
             if (inputCoordinate.length != 2) {
                 continue;

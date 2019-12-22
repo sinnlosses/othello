@@ -29,15 +29,15 @@ public enum Vector {
     /**
      * 行方向.
      */
-    private int vectorRow;
+    private int row;
     /**
      * 列方向.
      */
-    private int vectorCol;
+    private int col;
 
-    Vector(int vectorRow, int vectorCol) {
-        this.vectorRow = vectorRow;
-        this.vectorCol = vectorCol;
+    Vector(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
 
     /**
@@ -45,8 +45,8 @@ public enum Vector {
      *
      * @return 行方向を表す整数値
      */
-    public int getVectorRow() {
-        return vectorRow;
+    public int getRow() {
+        return row;
     }
 
     /**
@@ -54,7 +54,7 @@ public enum Vector {
      *
      * @return 列方向を表す整数値
      */
-    public int getVectorCol() {
-        return vectorCol;
+    public int getCol() {
+        return col;
     }
 }

@@ -113,7 +113,7 @@ public class Board {
     public Board cloneInstance() {
         Board newBoard = new Board();
         newBoard.field = cloneField();
-        newBoard.currentTurn = getCurrentTurn();
+        newBoard.currentTurn = currentTurn;
 
         return newBoard;
     }
