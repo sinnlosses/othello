@@ -124,12 +124,12 @@ public class NormalAI implements StrategyInterface {
                 othello.nextTurn();
                 beta = Math.min(beta, alphaBeta(othello, depth - 1, alpha, beta));
             }
+
+            othello.goBack(1);
             if (alpha >= beta) {
                 // α-βカット
-                othello.goBack(1);
                 break;
             }
-            othello.goBack(1);
         }
         if (othello.getCurrentTurn() == me) {
             return alpha;
