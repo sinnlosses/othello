@@ -7,41 +7,42 @@ import othello.strategy.StrategyMgr;
  * オセロのゲームを進行するメインクラス.
  */
 public class Main {
-    public static void main(String[] args) {
-        Board othello = new Board();
 
-        System.out.println("ゲーム開始");
-        StrategyMgr strategyMgr = new StrategyMgr(GameMode.choiceGameMode());
+  public static void main(String[] args) {
+    Board othello = new Board();
 
-        // 初期表示
-        othello.printField();
+    System.out.println("ゲーム開始");
+    StrategyMgr strategyMgr = new StrategyMgr(GameMode.choiceGameMode());
 
-        while (!othello.isGameOver()) {
-            if (!othello.canPutForCurrentTurn()) {
-                othello.nextTurn();
-            }
+    // 初期表示
+    othello.printField();
 
-            othello.printCurrentTurn();
+    while (!othello.isGameOver()) {
+      if (!othello.canPutForCurrentTurn()) {
+        othello.nextTurn();
+      }
 
-            // 手番ごとに保持した戦略に基づきコマを置く座標の決定処理を行う.
-            Coordinate coordinate = strategyMgr.decideCoordinate(othello);
+      othello.printCurrentTurn();
 
-            // コマを置き, 挟んだコマをひっくり返す.
-            othello.processToPutPiece(coordinate);
+      // 手番ごとに保持した戦略に基づきコマを置く座標の決定処理を行う.
+      Coordinate coordinate = strategyMgr.decideCoordinate(othello);
 
-            othello.printResult(coordinate);
-            othello.nextTurn();
+      // コマを置き, 挟んだコマをひっくり返す.
+      othello.processToPutPiece(coordinate);
 
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+      othello.printResult(coordinate);
+      othello.nextTurn();
 
-        }
+      try {
+        Thread.sleep(200);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
 
-        System.out.println("ゲーム終了");
     }
+
+    System.out.println("ゲーム終了");
+  }
 }
 
 
