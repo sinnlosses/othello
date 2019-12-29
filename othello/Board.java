@@ -230,7 +230,6 @@ public class Board {
 
     // 置いたコマから見て周囲8方向に挟むコマがあるかどうかを調べる
     for (Vector vector : Vector.values()) {
-      // 自分のコマが調べる方向の先にあるか
       if (existOwnPieceAhead(coordinate, vector)) {
         return true;
       }
@@ -366,8 +365,8 @@ public class Board {
     if (!isInsideField(target)) {
       return false;
     }
+    // となりのコマは相手のコマでなければならない.
     if (getFieldPieceAt(target).getState() != PieceType.getEnemyType(currentTurn)) {
-      // となりのコマは相手のコマでなければならない.
       return false;
     }
     target = target.move(vector);
